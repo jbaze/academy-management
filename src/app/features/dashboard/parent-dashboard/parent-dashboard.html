@@ -1,0 +1,191 @@
+<div class="p-6 space-y-6">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Parent Dashboard</h1>
+      <p class="mt-1 text-sm text-gray-500">Monitor your children's progress and academy activities.</p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+      <button
+        (click)="refreshDashboard()"
+        class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+        <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div *ngIf="stats(); else loadingStats" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <app-stats-card
+      title="My Children"
+      [value]="stats()!.totalStudents"
+      icon="users"
+      color="blue">
+    </app-stats-card>
+
+    <app-stats-card
+      title="Enrolled Courses"
+      [value]="stats()!.activeEnrollments"
+      icon="book"
+      color="green">
+    </app-stats-card>
+
+    <app-stats-card
+      title="Active Courses"
+      [value]="stats()!.totalCourses"
+      icon="academic"
+      color="purple">
+    </app-stats-card>
+  </div>
+
+  <!-- My Children Section -->
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-semibold text-gray-900">My Children</h2>
+      <a routerLink="/students/new" class="text-sm text-indigo-600 hover:text-indigo-500">Add Child</a>
+    </div>
+
+    <div *ngIf="students().length > 0; else noChildren" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div *ngFor="let student of students()" class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
+        <div class="flex items-center space-x-3 mb-3">
+          <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
+            <span class="text-indigo-600 font-semibold text-sm">
+              {{ student.firstName.charAt(0) }}{{ student.lastName.charAt(0) }}
+            </span>
+          </div>
+          <div>
+            <h3 class="font-medium text-gray-900">{{ student.firstName }} {{ student.lastName }}</h3>
+            <p class="text-sm text-gray-500">Age {{ getAge(student.dateOfBirth) }} • {{ student.academicLevel }}</p>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-600">Courses:</span>
+            <span class="font-medium">{{ student.enrolledCourses.length }}</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-600">Status:</span>
+            <span [class]="student.isActive ? 'text-green-600' : 'text-red-600'">
+              {{ student.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="mt-4 flex space-x-2">
+          <a [routerLink]="['/students', student.id]" class="text-xs text-indigo-600 hover:text-indigo-500">View Details</a>
+          <a [routerLink]="['/students', student.id, 'progress']" class="text-xs text-green-600 hover:text-green-500">View Progress</a>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noChildren>
+      <div class="text-center py-8">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No children registered</h3>
+        <p class="mt-1 text-sm text-gray-500">Get started by adding your first child.</p>
+        <div class="mt-6">
+          <a routerLink="/students/new" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+            Add Child
+          </a>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Quick Actions for Parents -->
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <a routerLink="/billing" class="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors duration-200 group">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-medium text-gray-900">View Billing</h3>
+            <p class="text-sm text-gray-500">Check invoices & payments</p>
+          </div>
+        </div>
+      </a>
+
+      <a routerLink="/courses" class="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors duration-200 group">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-medium text-gray-900">Browse Courses</h3>
+            <p class="text-sm text-gray-500">Find new courses</p>
+          </div>
+        </div>
+      </a>
+
+      <a routerLink="/profile" class="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors duration-200 group">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200">
+            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-medium text-gray-900">Update Profile</h3>
+            <p class="text-sm text-gray-500">Manage account settings</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Upcoming Classes -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-gray-900">Upcoming Classes</h2>
+        <a routerLink="/scheduling" class="text-sm text-indigo-600 hover:text-indigo-500">View schedule</a>
+      </div>
+      <app-upcoming-classes
+        [classes]="stats()?.upcomingClasses || []"
+        [loading]="loading()">
+      </app-upcoming-classes>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-gray-900">Recent Activity</h2>
+        <a routerLink="/activity" class="text-sm text-indigo-600 hover:text-indigo-500">View all</a>
+      </div>
+      <app-recent-activity
+        [activities]="stats()?.recentActivity || []"
+        [loading]="loading()">
+      </app-recent-activity>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Template -->
+<ng-template #loadingStats>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div *ngFor="let i of [1,2,3]" class="bg-white rounded-lg shadow-md p-6">
+      <div class="animate-pulse">
+        <div class="flex items-center justify-between mb-4">
+          <div class="h-4 bg-gray-200 rounded w-20"></div>
+          <div class="w-8 h-8 bg-gray-200 rounded"></div>
+        </div>
+        <div class="h-8 bg-gray-200 rounded w-16 mb-2"></div>
+        <div class="h-3 bg-gray-200 rounded w-24"></div>
+      </div>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,42 @@
+<div class="min-h-screen bg-gray-50 flex">
+  <!-- Sidebar -->
+  <div class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0"
+       [class.translate-x-0]="sidebarOpen()"
+       [class.-translate-x-full]="!sidebarOpen()">
+    <app-sidebar
+      [isOpen]="sidebarOpen()"
+      [currentUser]="currentUser()"
+      (closeSidebar)="closeSidebar()">
+    </app-sidebar>
+  </div>
+
+  <!-- Mobile sidebar overlay -->
+  <div
+    *ngIf="sidebarOpen()"
+    class="fixed inset-0 z-40 lg:hidden"
+    (click)="closeSidebar()">
+    <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+  </div>
+
+  <!-- Main content area -->
+  <div class="flex-1 lg:ml-64">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-30">
+      <app-header
+        [currentUser]="currentUser()"
+        (toggleSidebar)="toggleSidebar()"
+        (logout)="onLogout()">
+      </app-header>
+    </header>
+
+    <!-- Page content -->
+    <main class="flex-1">
+      <div class="p-6">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <app-footer></app-footer>
+  </div>
+</div>

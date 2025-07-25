@@ -1,0 +1,298 @@
+<div class="p-6">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Invoices</h1>
+      <p class="mt-1 text-sm text-gray-500">Manage billing and payment tracking</p>
+    </div>
+    <div class="mt-4 sm:mt-0 flex space-x-3">
+      <a
+        *ngIf="isAdmin()"
+        routerLink="/billing/invoices/new"
+        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Create Invoice
+      </a>
+      <a
+        routerLink="/billing/reports"
+        class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+        Reports
+      </a>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Search -->
+    <div class="relative">
+      <input
+        [formControl]="searchControl"
+        type="text"
+        placeholder="Search invoices..."
+        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      </div>
+    </div>
+<!-- Status Filter -->
+    <div>
+      <select
+        [formControl]="statusFilter"
+        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+        <option *ngFor="let option of statusOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Paid This Month</dt>
+            <dd class="text-lg font-medium text-gray-900">
+              {{ getPaidAmount() | currency }}
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Pending</dt>
+            <dd class="text-lg font-medium text-gray-900">
+              {{ getPendingCount() }}
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Overdue</dt>
+            <dd class="text-lg font-medium text-gray-900">
+              {{ getOverdueCount() }}
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Total Invoices</dt>
+            <dd class="text-lg font-medium text-gray-900">{{ filteredInvoices().length }}</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Invoices Table -->
+  <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Invoice
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Student
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Parent
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Amount
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Due Date
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Status
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr
+            *ngFor="let invoice of filteredInvoices(); trackBy: trackByInvoiceId"
+            class="hover:bg-gray-50">
+
+            <!-- Invoice ID -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <div class="text-sm font-medium text-gray-900">
+                  #{{ invoice.id.substring(0, 8) }}
+                </div>
+              </div>
+            </td>
+
+            <!-- Student -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">
+                {{ students()[invoice.studentId]?.firstName }} {{ students()[invoice.studentId]?.lastName }}
+              </div>
+              <div class="text-sm text-gray-500">
+                {{ students()[invoice.studentId]?.academicLevel }}
+              </div>
+            </td>
+
+            <!-- Parent -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">
+                {{ parents()[invoice.parentId]?.firstName }} {{ parents()[invoice.parentId]?.lastName }}
+              </div>
+              <div class="text-sm text-gray-500">
+                {{ parents()[invoice.parentId]?.email }}
+              </div>
+            </td>
+
+            <!-- Amount -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-medium text-gray-900">
+                ${{ invoice.amount | number:'1.2-2' }}
+              </div>
+              <div *ngIf="invoice.items.length > 0" class="text-sm text-gray-500">
+                {{ invoice.items.length }} item(s)
+              </div>
+            </td>
+
+            <!-- Due Date -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">
+                {{ invoice.dueDate | date:'mediumDate' }}
+              </div>
+              <div
+                *ngIf="invoice.status === InvoiceStatus.OVERDUE"
+                class="text-sm text-red-600 font-medium">
+                {{ getDaysOverdue(invoice.dueDate) }} days overdue
+              </div>
+            </td>
+
+            <!-- Status -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span [class]="getStatusBadgeClass(invoice.status)">
+                {{ invoice.status | titlecase }}
+              </span>
+            </td>
+
+            <!-- Actions -->
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+              <div class="flex items-center space-x-2">
+                <!-- View Details -->
+                <a
+                  [routerLink]="['/billing/invoices', invoice.id]"
+                  class="text-indigo-600 hover:text-indigo-900">
+                  View
+                </a>
+
+                <!-- Quick Actions -->
+                <div class="relative" *ngIf="isAdmin()">
+                  <!-- Mark as Paid Button -->
+                  <button
+                    *ngIf="invoice.status !== InvoiceStatus.PAID && invoice.status !== InvoiceStatus.CANCELLED"
+                    (click)="markAsPaid(invoice)"
+                    class="text-green-600 hover:text-green-900">
+                    Mark Paid
+                  </button>
+
+                  <!-- Send Reminder -->
+                  <button
+                    *ngIf="invoice.status === InvoiceStatus.PENDING || invoice.status === InvoiceStatus.OVERDUE"
+                    (click)="sendReminder(invoice)"
+                    class="text-yellow-600 hover:text-yellow-900">
+                    Remind
+                  </button>
+
+                  <!-- Status Change Dropdown -->
+                  <select
+                    (change)="quickStatusUpdate(invoice, $any($event.target).value)"
+                    class="ml-2 text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="">Change Status</option>
+                    <option
+                      *ngFor="let status of statusOptions.slice(1)"
+                      [value]="status.value"
+                      [disabled]="invoice.status === status.value">
+                      {{ status.label }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Empty State -->
+      <div *ngIf="!loading() && filteredInvoices().length === 0" class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No invoices found</h3>
+        <p class="mt-1 text-sm text-gray-500">
+          {{ searchControl.value || statusFilter.value !== 'all' ? 'Try adjusting your filters.' : 'Get started by creating a new invoice.' }}
+        </p>
+        <div class="mt-6" *ngIf="isAdmin() && !searchControl.value && statusFilter.value === 'all'">
+          <a
+            routerLink="/billing/invoices/new"
+            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+            <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Create Invoice
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

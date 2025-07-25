@@ -1,0 +1,254 @@
+<div class="p-6">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Courses</h1>
+      <p class="mt-1 text-sm text-gray-500">Manage course offerings and enrollment</p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+      <a
+        *ngIf="isAdmin()"
+        routerLink="/courses/new"
+        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Add Course
+      </a>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white rounded-lg shadow mb-6 p-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <!-- Search -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+        <input
+          [formControl]="searchControl"
+          type="text"
+          placeholder="Search courses..."
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+
+      <!-- Status Filter -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+        <select
+          [formControl]="statusFilter"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          <option value="all">All Statuses</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+          <option value="suspended">Suspended</option>
+        </select>
+      </div>
+
+      <!-- Level Filter -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Level</label>
+        <select
+          [formControl]="levelFilter"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          <option value="all">All Levels</option>
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+        </select>
+      </div>
+
+      <!-- Category Filter -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+        <select
+          [formControl]="categoryFilter"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          <option value="all">All Categories</option>
+          <option *ngFor="let category of categories()" [value]="category">{{ category }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Courses Grid -->
+  <div *ngIf="!loading(); else loadingTemplate" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div
+      *ngFor="let course of filteredCourses(); trackBy: trackByCourseId"
+      class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden">
+
+      <!-- Course Card -->
+      <div class="p-6">
+        <!-- Header -->
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex-1">
+            <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ course.name }}</h3>
+            <p class="text-sm text-gray-600">{{ course.category }}</p>
+          </div>
+          <div class="flex flex-col items-end space-y-1">
+            <span [class]="getStatusBadgeClass(course.status)">
+              {{ course.status | titlecase }}
+            </span>
+            <span [class]="'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ' + getLevelBadgeClass(course.level)">
+              {{ course.level | titlecase }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <p class="text-sm text-gray-600 mb-4 line-clamp-2">{{ course.description }}</p>
+
+        <!-- Course Info -->
+        <div class="space-y-2 mb-4">
+          <!-- Enrollment -->
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-600">Enrollment:</span>
+            <div class="flex items-center">
+              <span class="font-medium" [class]="getEnrollmentColor(getEnrollmentRate(course))">
+                {{ course.currentStudents }}/{{ course.maxStudents }}
+              </span>
+              <span class="text-gray-500 ml-1">({{ getEnrollmentRate(course) }}%)</span>
+            </div>
+          </div>
+
+          <!-- Duration -->
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-600">Duration:</span>
+            <span class="font-medium text-gray-900">{{ course.duration }} weeks</span>
+          </div>
+
+          <!-- Price -->
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-600">Price:</span>
+            <span class="font-medium text-gray-900">${{ course.price }}</span>
+          </div>
+
+          <!-- Mentor -->
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-600">Mentor:</span>
+            <span class="font-medium text-gray-900">
+              {{ mentors()[course.mentorId]?.userId || 'Unassigned' }}
+            </span>
+          </div>
+
+          <!-- Classroom -->
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-600">Classroom:</span>
+            <span class="font-medium text-gray-900">
+              {{ classrooms()[course.classroomId]?.name || 'Unassigned' }}
+            </span>
+          </div>
+
+          <!-- Schedule -->
+          <div class="text-sm">
+            <span class="text-gray-600">Schedule:</span>
+            <p class="font-medium text-gray-900 mt-1">{{ formatSchedule(course.schedule) }}</p>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-4">
+          <div class="flex items-center justify-between text-xs text-gray-600 mb-1">
+            <span>Enrollment Progress</span>
+            <span>{{ getEnrollmentRate(course) }}%</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div
+              class="h-2 rounded-full transition-all duration-300"
+              [class]="getEnrollmentRate(course) >= 90 ? 'bg-red-500' : getEnrollmentRate(course) >= 70 ? 'bg-yellow-500' : 'bg-green-500'"
+              [style.width.%]="getEnrollmentRate(course)">
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+          <div class="flex space-x-2">
+            <a
+              [routerLink]="['/courses', course.id]"
+              class="text-indigo-600 hover:text-indigo-500 text-sm font-medium">
+              View Details
+            </a>
+            <a
+              *ngIf="isAdmin()"
+              [routerLink]="['/courses', course.id, 'edit']"
+              class="text-green-600 hover:text-green-500 text-sm font-medium">
+              Edit
+            </a>
+            <a
+              [routerLink]="['/courses', course.id, 'enrollment']"
+              class="text-blue-600 hover:text-blue-500 text-sm font-medium">
+              Enrollment
+            </a>
+          </div>
+
+          <div class="flex space-x-1" *ngIf="isAdmin()">
+            <button
+              (click)="toggleCourseStatus(course)"
+              class="p-1 text-gray-400 hover:text-gray-600"
+              [title]="course.status === 'active' ? 'Deactivate' : 'Activate'">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+              </svg>
+            </button>
+
+            <button
+              (click)="suspendCourse(course)"
+              class="p-1 text-yellow-400 hover:text-yellow-600"
+              title="Suspend">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </button>
+
+            <button
+              (click)="deleteCourse(course)"
+              class="p-1 text-red-400 hover:text-red-600"
+              title="Delete">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading() && filteredCourses().length === 0" class="text-center py-12">
+    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+    </svg>
+    <h3 class="mt-2 text-sm font-medium text-gray-900">No courses found</h3>
+    <p class="mt-1 text-sm text-gray-500">Get started by creating a new course.</p>
+    <div class="mt-6">
+      <a
+        *ngIf="isAdmin()"
+        routerLink="/courses/new"
+        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+        <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Add Course
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Template -->
+<ng-template #loadingTemplate>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let i of [1,2,3,4,5,6]" class="bg-white rounded-lg shadow-md p-6">
+      <div class="animate-pulse">
+        <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+        <div class="h-3 bg-gray-200 rounded w-1/2 mb-4"></div>
+        <div class="h-3 bg-gray-200 rounded w-full mb-2"></div>
+        <div class="h-3 bg-gray-200 rounded w-2/3 mb-4"></div>
+        <div class="space-y-2">
+          <div class="h-3 bg-gray-200 rounded w-full"></div>
+          <div class="h-3 bg-gray-200 rounded w-3/4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,313 @@
+
+<div *ngIf="loading()" class="flex items-center justify-center min-h-screen">
+  <div class="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+</div>
+
+<div *ngIf="!loading() && course()" class="mx-auto p-6">
+  <!-- Breadcrumb -->
+  <nav class="flex mb-6" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+      <li class="inline-flex items-center">
+        <a routerLink="/courses" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
+          Courses
+        </a>
+      </li>
+      <li>
+        <div class="flex items-center">
+          <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+          </svg>
+          <a [routerLink]="['/courses', course()?.id]" class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">
+            {{ course()?.name }}
+          </a>
+        </div>
+      </li>
+      <li>
+        <div class="flex items-center">
+          <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+          </svg>
+          <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Schedule</span>
+        </div>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Course Schedule</h1>
+        <p class="mt-1 text-sm text-gray-600">{{ course()?.name }}</p>
+      </div>
+      <div class="flex space-x-3">
+        <a
+          [routerLink]="['/courses', course()?.id]"
+          class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+          <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Back to Course
+        </a>
+        <button
+          *ngIf="canEdit() && !isEditing()"
+          (click)="toggleEdit()"
+          class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+          <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+          </svg>
+          Edit Schedule
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Current Schedule Display -->
+  <div *ngIf="!isEditing()" class="space-y-6">
+
+    <!-- Schedule Overview -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Current Schedule</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <div
+          *ngFor="let scheduleItem of course()?.schedule; let i = index"
+          class="relative p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-300 transition-colors duration-200"
+          [class.border-red-300]="checkTimeConflict(i)"
+          [class.bg-red-50]="checkTimeConflict(i)">
+
+          <!-- Day Badge -->
+          <div class="absolute -top-2 -left-2 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
+            <span class="text-white text-xs font-bold">{{ i + 1 }}</span>
+          </div>
+
+          <!-- Conflict Warning -->
+          <div *ngIf="checkTimeConflict(i)" class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+          </div>
+
+          <div class="space-y-2">
+            <div class="font-semibold text-gray-900">{{ getDayLabel(scheduleItem.dayOfWeek) }}</div>
+            <div class="text-sm text-gray-600">
+              {{ formatTime(scheduleItem.startTime) }} - {{ formatTime(scheduleItem.endTime) }}
+            </div>
+            <div class="text-xs text-gray-500">
+              Duration: {{ calculateDuration(scheduleItem.startTime, scheduleItem.endTime) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Classroom Information -->
+      <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+        <div class="flex items-center">
+          <svg class="w-5 h-5 text-blue-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+          </svg>
+          <div>
+            <div class="text-sm font-medium text-blue-900">
+              Classroom: {{ getClassroomName() }}
+            </div>
+            <div class="text-xs text-blue-700">
+              Location: {{ getClassroomLocation() }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Schedule Conflicts Warning -->
+      <div *ngIf="hasConflicts()" class="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+        <div class="flex items-center">
+          <svg class="w-5 h-5 text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+          </svg>
+          <span class="text-sm text-red-800">
+            <strong>Schedule Conflicts Detected:</strong> Some time slots may conflict with other courses in the same classroom.
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weekly Calendar View -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Weekly Calendar View</h2>
+
+      <div class="overflow-x-auto">
+        <div class="grid grid-cols-8 gap-1 min-w-full">
+          <!-- Time Column Header -->
+          <div class="p-2 font-medium text-gray-700 text-center">Time</div>
+
+          <!-- Day Headers -->
+          <div *ngFor="let day of daysOfWeek" class="p-2 font-medium text-gray-700 text-center bg-gray-50">
+            {{ day.label }}
+          </div>
+
+          <!-- Time Slots -->
+          <ng-container *ngFor="let hour of timeSlots">
+            <!-- Time Label -->
+            <div class="p-2 text-sm text-gray-600 text-center border-t border-gray-200">
+              {{ hour }}
+            </div>
+
+            <!-- Day Columns -->
+            <div *ngFor="let day of daysOfWeek"
+                 class="p-1 border-t border-gray-200 min-h-12 relative"
+                 [class.bg-indigo-50]="isScheduledTime(day.value, hour)"
+                 [class.border-indigo-200]="isScheduledTime(day.value, hour)">
+
+              <!-- Course Block -->
+              <div *ngIf="isScheduledTime(day.value, hour)"
+                   class="absolute inset-1 bg-indigo-500 text-white text-xs p-1 rounded flex items-center justify-center">
+                <span class="font-medium">{{ course()?.name }}</span>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Schedule Edit Form -->
+  <div *ngIf="isEditing()" class="bg-white rounded-lg shadow-md p-6">
+    <form [formGroup]="scheduleForm" (ngSubmit)="onSubmit()">
+
+      <!-- Form Header -->
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-semibold text-gray-900">Edit Schedule</h2>
+        <div class="flex space-x-3">
+          <button
+            type="button"
+            (click)="toggleEdit()"
+            class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+            Cancel
+          </button>
+          <button
+            type="submit"
+            [disabled]="scheduleForm.invalid || loading()"
+            class="px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50">
+            <span *ngIf="loading()">Saving...</span>
+            <span *ngIf="!loading()">Save Changes</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Classroom Selection -->
+      <div class="mb-6">
+        <label for="classroomId" class="block text-sm font-medium text-gray-700 mb-2">
+          Classroom *
+        </label>
+        <select
+          id="classroomId"
+          formControlName="classroomId"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+          <option value="">Select a classroom</option>
+          <option *ngFor="let classroom of classrooms()" [value]="classroom.id">
+            {{ classroom.name }} - {{ classroom.location }} ({{ classroom.capacity }} seats)
+          </option>
+        </select>
+      </div>
+
+      <!-- Schedule Slots -->
+      <div class="mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-medium text-gray-900">Class Schedule</h3>
+          <button
+            type="button"
+            (click)="addScheduleSlot()"
+            class="inline-flex items-center px-3 py-2 border border-dashed border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Add Time Slot
+          </button>
+        </div>
+
+        <div formArrayName="schedule" class="space-y-4">
+          <div
+            *ngFor="let scheduleGroup of scheduleArray.controls; let i = index"
+            [formGroupName]="i"
+            class="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
+
+            <!-- Day of Week -->
+            <div class="flex-1">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Day</label>
+              <select
+                formControlName="dayOfWeek"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                <option value="">Select day</option>
+                <option *ngFor="let day of daysOfWeek" [value]="day.value">{{ day.label }}</option>
+              </select>
+            </div>
+
+            <!-- Start Time -->
+            <div class="flex-1">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Start Time</label>
+              <input
+                type="time"
+                formControlName="startTime"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <!-- End Time -->
+            <div class="flex-1">
+              <label class="block text-sm font-medium text-gray-700 mb-1">End Time</label>
+              <input
+                type="time"
+                formControlName="endTime"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <!-- Conflict Indicator -->
+            <div class="flex-shrink-0 w-8 flex justify-center pt-6">
+              <div *ngIf="checkTimeConflict(i)" class="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Remove Button -->
+            <div class="flex-shrink-0 pt-6">
+              <button
+                type="button"
+                (click)="removeScheduleSlot(i)"
+                class="p-2 text-red-400 hover:text-red-600 focus:outline-none">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- No Schedule Slots -->
+        <div *ngIf="scheduleArray.length === 0" class="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">No schedule slots</h3>
+          <p class="mt-1 text-sm text-gray-500">Add time slots to create the course schedule.</p>
+        </div>
+      </div>
+
+      <!-- Schedule Conflicts Warning in Form -->
+      <div *ngIf="hasConflicts()" class="p-4 bg-red-50 border border-red-200 rounded-lg">
+        <div class="flex items-center">
+          <svg class="w-5 h-5 text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+          </svg>
+          <div>
+            <span class="text-sm text-red-800">
+              <strong>Schedule Conflicts Detected:</strong> Some time slots conflict with other courses in the selected classroom.
+            </span>
+            <div class="text-xs text-red-700 mt-1">
+              Please adjust the times or select a different classroom to resolve conflicts.
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

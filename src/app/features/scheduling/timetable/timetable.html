@@ -1,0 +1,93 @@
+<div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Weekly Timetable</h1>
+      <p class="mt-2 text-gray-600">Weekly schedule overview for all classrooms and mentors</p>
+    </div>
+    <div class="flex space-x-3">
+      <select class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <option value="all">All Classrooms</option>
+        <option value="1">Room A</option>
+        <option value="2">Room B</option>
+        <option value="3">Room C</option>
+      </select>
+      <a routerLink="/scheduling/new"
+         class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+        Add Schedule
+      </a>
+    </div>
+  </div>
+
+  <!-- Timetable Grid -->
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <!-- Header -->
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
+              Time
+            </th>
+            <th *ngFor="let day of daysOfWeek"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              {{ day }}
+            </th>
+          </tr>
+        </thead>
+
+        <!-- Time Slots -->
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let timeSlot of timeSlots">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 bg-gray-50">
+              {{ timeSlot }}
+            </td>
+            <td *ngFor="let day of daysOfWeek; let dayIndex = index"
+                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 relative min-h-[80px] border-r border-gray-100">
+
+              <!-- Schedule Items for this time slot and day -->
+              <div *ngFor="let schedule of getSchedulesForTimeSlot(timeSlot, dayIndex)"
+                   class="mb-2 p-2 rounded text-white text-xs"
+                   [class]="getScheduleColor(schedule)">
+                <div class="font-medium">{{ schedule.courseName }}</div>
+                <div class="text-xs opacity-90">{{ schedule.mentorName }}</div>
+                <div class="text-xs opacity-90">{{ schedule.classroomName }}</div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="mt-6 bg-white rounded-lg shadow p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Legend</h3>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div class="flex items-center space-x-2">
+        <div class="w-4 h-4 bg-blue-500 rounded"></div>
+        <span class="text-sm text-gray-700">Mathematics</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <div class="w-4 h-4 bg-green-500 rounded"></div>
+        <span class="text-sm text-gray-700">Physics</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <div class="w-4 h-4 bg-purple-500 rounded"></div>
+        <span class="text-sm text-gray-700">Chemistry</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <div class="w-4 h-4 bg-red-500 rounded"></div>
+        <span class="text-sm text-gray-700">Biology</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <div class="w-4 h-4 bg-yellow-500 rounded"></div>
+        <span class="text-sm text-gray-700">Computer Science</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <div class="w-4 h-4 bg-indigo-500 rounded"></div>
+        <span class="text-sm text-gray-700">Other</span>
+      </div>
+    </div>
+  </div>
+</div>

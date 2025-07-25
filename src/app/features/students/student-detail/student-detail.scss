@@ -1,0 +1,458 @@
+// src/app/features/students/student-detail/student-detail.component.scss
+// CONTENT ONLY - NO LAYOUT STYLES
+
+.breadcrumb {
+  @apply flex mb-6;
+
+  ol {
+    @apply inline-flex items-center space-x-1;
+  }
+
+  li {
+    @apply inline-flex items-center;
+
+    a {
+      @apply inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200;
+    }
+
+    .separator {
+      @apply w-6 h-6 text-gray-400;
+    }
+  }
+}
+
+.student-header {
+  @apply flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6;
+
+  .title-section {
+    h1 {
+      @apply text-3xl font-bold text-gray-900;
+    }
+
+    p {
+      @apply mt-1 text-sm text-gray-500;
+    }
+  }
+
+  .actions {
+    @apply mt-4 sm:mt-0 flex space-x-3;
+  }
+}
+
+.student-card {
+  @apply bg-white shadow-lg rounded-lg overflow-hidden;
+
+  .card-content {
+    @apply px-6 py-6;
+  }
+}
+
+.student-avatar {
+  @apply mx-auto h-32 w-32 rounded-full flex items-center justify-center text-white text-4xl font-bold mb-4;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+  &.loading {
+    @apply bg-gray-200 animate-pulse;
+  }
+}
+
+.student-info {
+  @apply text-center;
+
+  .name {
+    @apply text-2xl font-bold text-gray-900 mb-2;
+  }
+
+  .academic-level {
+    @apply text-gray-600 mb-3;
+  }
+
+  .status-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+
+    &.active {
+      @apply bg-green-100 text-green-800;
+    }
+
+    &.inactive {
+      @apply bg-red-100 text-red-800;
+    }
+  }
+}
+
+.quick-stats {
+  @apply mt-6 grid grid-cols-2 gap-4;
+
+  .stat-item {
+    @apply bg-gray-50 rounded-lg p-3 text-center;
+
+    .stat-value {
+      @apply text-2xl font-bold;
+
+      &.age {
+        @apply text-indigo-600;
+      }
+
+      &.courses {
+        @apply text-green-600;
+      }
+    }
+
+    .stat-label {
+      @apply text-sm text-gray-600;
+    }
+  }
+}
+
+.info-section {
+  @apply space-y-8;
+
+  .section-header {
+    @apply text-lg font-semibold text-gray-900 mb-4 flex items-center;
+
+    svg {
+      @apply mr-2 h-5 w-5 text-gray-600;
+    }
+  }
+
+  .info-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+
+    &.full-width {
+      @apply md:col-span-2;
+    }
+  }
+
+  .info-item {
+    @apply bg-gray-50 rounded-lg p-4;
+
+    .label {
+      @apply block text-sm font-medium text-gray-700;
+    }
+
+    .value {
+      @apply mt-1 text-sm text-gray-900;
+    }
+  }
+}
+
+.parent-info {
+  @apply bg-blue-50 rounded-lg p-4;
+
+  .parent-details {
+    @apply flex items-center justify-between;
+
+    .info {
+      .name {
+        @apply text-lg font-medium text-blue-900;
+      }
+
+      .contact {
+        @apply text-sm text-blue-700;
+      }
+    }
+
+    .badge {
+      @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800;
+    }
+  }
+}
+
+.emergency-contact {
+  @apply bg-red-50 rounded-lg p-4;
+
+  .contact-grid {
+    @apply grid grid-cols-1 md:grid-cols-3 gap-4;
+
+    .contact-item {
+      .label {
+        @apply block text-sm font-medium text-red-700;
+      }
+
+      .value {
+        @apply mt-1 text-sm text-red-900;
+      }
+    }
+  }
+}
+
+.courses-section {
+  @apply mt-8 bg-white shadow-lg rounded-lg overflow-hidden;
+
+  .section-header {
+    @apply px-6 py-4 border-b border-gray-200 flex items-center justify-between;
+
+    h3 {
+      @apply text-lg font-semibold text-gray-900 flex items-center;
+
+      svg {
+        @apply mr-2 h-5 w-5 text-gray-600;
+      }
+    }
+
+    .manage-link {
+      @apply text-indigo-600 hover:text-indigo-500 text-sm font-medium transition-colors duration-200;
+    }
+  }
+
+  .courses-content {
+    @apply px-6 py-6;
+  }
+}
+
+.courses-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
+}
+
+.course-card {
+  @apply border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200;
+
+  .course-header {
+    @apply flex items-start justify-between mb-3;
+
+    .course-title {
+      @apply text-lg font-semibold text-gray-900;
+    }
+
+    .status-badge {
+      @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+
+      &.active {
+        @apply bg-green-100 text-green-800;
+      }
+
+      &.inactive {
+        @apply bg-gray-100 text-gray-800;
+      }
+
+      &.suspended {
+        @apply bg-red-100 text-red-800;
+      }
+    }
+  }
+
+  .course-description {
+    @apply text-sm text-gray-600 mb-3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .course-details {
+    @apply space-y-2;
+
+    .detail-row {
+      @apply flex items-center justify-between text-sm;
+
+      .label {
+        @apply text-gray-600;
+      }
+
+      .value {
+        @apply text-gray-900;
+
+        &.badge {
+          @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+
+          &.beginner {
+            @apply bg-green-100 text-green-800;
+          }
+
+          &.intermediate {
+            @apply bg-yellow-100 text-yellow-800;
+          }
+
+          &.advanced {
+            @apply bg-red-100 text-red-800;
+          }
+        }
+      }
+    }
+  }
+
+  .course-actions {
+    @apply mt-4 pt-3 border-t border-gray-200 flex space-x-2;
+
+    button {
+      @apply text-sm font-medium transition-colors duration-200;
+
+      &.view-course {
+        @apply text-indigo-600 hover:text-indigo-500;
+      }
+
+      &.view-progress {
+        @apply text-green-600 hover:text-green-500;
+      }
+    }
+  }
+}
+
+.no-courses {
+  @apply text-center py-8;
+
+  svg {
+    @apply mx-auto h-12 w-12 text-gray-400;
+  }
+
+  h3 {
+    @apply mt-2 text-sm font-medium text-gray-900;
+  }
+
+  p {
+    @apply mt-1 text-sm text-gray-500;
+  }
+
+  .cta-button {
+    @apply mt-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200;
+  }
+}
+
+.quick-actions {
+  @apply mt-8 bg-white shadow-lg rounded-lg overflow-hidden;
+
+  .actions-header {
+    @apply px-6 py-4 border-b border-gray-200;
+
+    h3 {
+      @apply text-lg font-semibold text-gray-900;
+    }
+  }
+
+  .actions-grid {
+    @apply px-6 py-6 grid grid-cols-1 md:grid-cols-4 gap-4;
+  }
+
+  .action-item {
+    @apply flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200;
+
+    .icon {
+      @apply h-8 w-8 mr-3;
+
+      &.progress {
+        @apply text-blue-600;
+      }
+
+      &.attendance {
+        @apply text-green-600;
+      }
+
+      &.billing {
+        @apply text-yellow-600;
+      }
+
+      &.enrollment {
+        @apply text-purple-600;
+      }
+    }
+
+    .content {
+      .title {
+        @apply text-sm font-medium text-gray-900;
+      }
+
+      .subtitle {
+        @apply text-xs text-gray-500;
+      }
+    }
+  }
+}
+
+.error-state {
+  @apply text-center py-12;
+
+  svg {
+    @apply mx-auto h-12 w-12 text-gray-400;
+  }
+
+  h3 {
+    @apply mt-2 text-sm font-medium text-gray-900;
+  }
+
+  p {
+    @apply mt-1 text-sm text-gray-500;
+  }
+
+  .back-button {
+    @apply mt-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200;
+  }
+}
+
+// Loading state animations
+.loading-skeleton {
+  @apply animate-pulse;
+
+  .skeleton-item {
+    @apply bg-gray-200 rounded;
+
+    &.header {
+      @apply h-8 w-1/4 mb-4;
+    }
+
+    &.avatar {
+      @apply h-32 w-32 rounded-full mx-auto mb-4;
+    }
+
+    &.text {
+      @apply h-4 mb-2;
+
+      &.full {
+        @apply w-full;
+      }
+
+      &.three-quarters {
+        @apply w-3/4;
+      }
+
+      &.half {
+        @apply w-1/2;
+      }
+    }
+  }
+}
+
+// Responsive adjustments for mobile
+@media (max-width: 768px) {
+  .info-grid {
+    @apply grid-cols-1 !important;
+  }
+
+  .courses-grid {
+    @apply grid-cols-1 !important;
+  }
+
+  .actions-grid {
+    @apply grid-cols-2 gap-2;
+  }
+
+  .student-header {
+    @apply flex-col items-start;
+
+    .actions {
+      @apply mt-4 w-full flex-col space-x-0 space-y-2;
+    }
+  }
+}
+
+// Focus and accessibility styles
+button:focus,
+a:focus {
+  @apply outline-none ring-2 ring-offset-2 ring-indigo-500;
+}
+
+// Hover states for interactive elements
+.course-card:hover {
+  @apply transform translate-y-1 shadow-lg;
+}
+
+.action-item:hover {
+  @apply shadow-sm;
+}
+
+// Custom line clamp for course descriptions
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

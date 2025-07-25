@@ -1,0 +1,17 @@
+.main-layout {
+  @apply min-h-screen bg-gray-50;
+}
+
+.sidebar-overlay {
+  @apply fixed inset-0 z-40 lg:hidden;
+  backdrop-filter: blur(2px);
+}
+
+.main-content {
+  @apply lg:pl-64;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+.content-wrapper {
+  @apply flex-1 min-h-screen;
+}

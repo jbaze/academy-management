@@ -1,0 +1,377 @@
+<!-- src/app/features/classrooms/classroom-detail/classroom-detail.component.html -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Loading State -->
+  <div *ngIf="isLoading()" class="flex items-center justify-center h-64">
+    <div class="flex flex-col items-center space-y-3">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      <p class="text-sm text-gray-500">Loading classroom details...</p>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!isLoading() && classroom()">
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <nav class="flex" aria-label="Breadcrumb">
+            <ol class="flex items-center space-x-2">
+              <li>
+                <a routerLink="/classrooms" class="text-gray-500 hover:text-gray-700">
+                  <svg class="flex-shrink-0 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                  </svg>
+                  <span class="sr-only">Classrooms</span>
+                </a>
+              </li>
+              <li>
+                <svg class="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                </svg>
+              </li>
+              <li>
+                <span class="text-gray-500 text-sm">{{ classroom()?.name }}</span>
+              </li>
+            </ol>
+          </nav>
+          <h1 class="mt-2 text-3xl font-bold text-gray-900">{{ classroom()?.name }}</h1>
+          <p class="mt-1 text-gray-600">{{ classroom()?.location }}</p>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <!-- Status Badge -->
+          <span
+            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
+            [class.bg-green-100]="classroom()?.isActive"
+            [class.text-green-800]="classroom()?.isActive"
+            [class.bg-red-100]="!classroom()?.isActive"
+            [class.text-red-800]="!classroom()?.isActive">
+            <svg class="w-2 h-2 mr-1.5" fill="currentColor" viewBox="0 0 8 8">
+              <circle cx="4" cy="4" r="3" />
+            </svg>
+            {{ classroom()?.isActive ? 'Active' : 'Inactive' }}
+          </span>
+
+          <!-- Action Buttons -->
+          <button
+            [routerLink]="['/classrooms', classroom()?.id, 'edit']"
+            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+            Edit
+          </button>
+
+          <button
+            (click)="toggleActivation()"
+            [disabled]="isLoading()"
+            class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2"
+            [class.bg-red-600]="classroom()?.isActive"
+            [class.hover:bg-red-700]="classroom()?.isActive"
+            [class.focus:ring-red-500]="classroom()?.isActive"
+            [class.bg-green-600]="!classroom()?.isActive"
+            [class.hover:bg-green-700]="!classroom()?.isActive"
+            [class.focus:ring-green-500]="!classroom()?.isActive">
+            <svg *ngIf="classroom()?.isActive" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L5.636 5.636"></path>
+            </svg>
+            <svg *ngIf="!classroom()?.isActive" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            {{ classroom()?.isActive ? 'Deactivate' : 'Activate' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Grid Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left Column - Main Info -->
+      <div class="lg:col-span-2 space-y-6">
+
+        <!-- Basic Information Card -->
+        <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900">Basic Information</h3>
+          </div>
+          <div class="px-6 py-4">
+            <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+              <div>
+                <dt class="text-sm font-medium text-gray-500">Classroom Name</dt>
+                <dd class="mt-1 text-sm text-gray-900">{{ classroom()?.name }}</dd>
+              </div>
+              <div>
+                <dt class="text-sm font-medium text-gray-500">Location</dt>
+                <dd class="mt-1 text-sm text-gray-900">{{ classroom()?.location }}</dd>
+              </div>
+              <div>
+                <dt class="text-sm font-medium text-gray-500">Capacity</dt>
+                <dd class="mt-1 text-sm text-gray-900">
+                  <span class="inline-flex items-center">
+                    <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    {{ classroom()?.capacity }} students
+                  </span>
+                </dd>
+              </div>
+              <div>
+                <dt class="text-sm font-medium text-gray-500">Status</dt>
+                <dd class="mt-1">
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    [class.bg-green-100]="classroom()?.isActive"
+                    [class.text-green-800]="classroom()?.isActive"
+                    [class.bg-red-100]="!classroom()?.isActive"
+                    [class.text-red-800]="!classroom()?.isActive">
+                    {{ classroom()?.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </dd>
+              </div>
+              <div class="sm:col-span-2">
+                <dt class="text-sm font-medium text-gray-500">Created</dt>
+                <dd class="mt-1 text-sm text-gray-900">{{ classroom()?.createdAt | date:'medium' }}</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <!-- Equipment Card -->
+        <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900">Available Equipment</h3>
+          </div>
+          <div class="px-6 py-4">
+            <div *ngIf="classroom()?.equipment && classroom()!.equipment.length > 0; else noEquipment">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div
+                  *ngFor="let equipment of classroom()?.equipment"
+                  class="flex items-center p-3 bg-gray-50 rounded-lg">
+                  <div class="flex-shrink-0">
+                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                    </svg>
+                  </div>
+                  <div class="ml-3">
+                    <p class="text-sm font-medium text-gray-900">{{ equipment }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <ng-template #noEquipment>
+              <div class="text-center py-6">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <p class="mt-2 text-sm text-gray-500">No equipment listed</p>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+
+        <!-- Current Schedule Card -->
+        <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg font-medium text-gray-900">Current Schedule</h3>
+              <button
+                [routerLink]="['/classrooms', classroom()?.id, 'schedule']"
+                class="text-sm text-indigo-600 hover:text-indigo-500 font-medium">
+                View Full Schedule
+              </button>
+            </div>
+          </div>
+          <div class="px-6 py-4">
+            <div *ngIf="currentCourses().length > 0; else noSchedule">
+              <div class="space-y-4">
+                <div
+                  *ngFor="let course of currentCourses()"
+                  class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div class="flex-1">
+                    <h4 class="text-sm font-medium text-gray-900">{{ course.name }}</h4>
+                    <p class="text-sm text-gray-600">{{ course.mentorName }}</p>
+                    <div class="mt-1 flex items-center text-xs text-gray-500">
+                      <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      <span *ngFor="let schedule of course.schedule; let last = last">
+                        {{ getDayName(schedule.dayOfWeek) }} {{ schedule.startTime }}-{{ schedule.endTime }}
+                        <span *ngIf="!last">, </span>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-xs text-gray-500">{{ course.currentStudents }}/{{ course.maxStudents }}</span>
+                    <button
+                      [routerLink]="['/courses', course.id]"
+                      class="text-indigo-600 hover:text-indigo-500">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <ng-template #noSchedule>
+              <div class="text-center py-6">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <p class="mt-2 text-sm text-gray-500">No courses scheduled</p>
+                <button
+                  [routerLink]="['/scheduling/new']"
+                  [queryParams]="{ classroomId: classroom()?.id }"
+                  class="mt-2 text-sm text-indigo-600 hover:text-indigo-500 font-medium">
+                  Schedule a Course
+                </button>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Statistics & Quick Actions -->
+      <div class="space-y-6">
+
+        <!-- Usage Statistics -->
+        <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900">Usage Statistics</h3>
+          </div>
+          <div class="px-6 py-4">
+            <dl class="space-y-4">
+              <div class="flex items-center justify-between">
+                <dt class="text-sm text-gray-500">Current Utilization</dt>
+                <dd class="text-sm font-medium text-gray-900">{{ getUtilizationPercentage() }}%</dd>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  class="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+                  [style.width.%]="getUtilizationPercentage()">
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <dt class="text-sm text-gray-500">Active Courses</dt>
+                <dd class="text-sm font-medium text-gray-900">{{ currentCourses().length }}</dd>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <dt class="text-sm text-gray-500">Total Students</dt>
+                <dd class="text-sm font-medium text-gray-900">{{ getTotalStudents() }}</dd>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <dt class="text-sm text-gray-500">Available Hours</dt>
+                <dd class="text-sm font-medium text-gray-900">{{ getAvailableHours() }}</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900">Quick Actions</h3>
+          </div>
+          <div class="px-6 py-4">
+            <div class="space-y-3">
+              <button
+                [routerLink]="['/scheduling/new']"
+                [queryParams]="{ classroomId: classroom()?.id }"
+                class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Schedule Course
+              </button>
+
+              <button
+                [routerLink]="['/classrooms', classroom()?.id, 'availability']"
+                class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                Check Availability
+              </button>
+
+              <button
+                [routerLink]="['/classrooms', classroom()?.id, 'edit']"
+                class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+                Edit Details
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900">Recent Activity</h3>
+          </div>
+          <div class="px-6 py-4">
+            <div *ngIf="recentActivity().length > 0; else noActivity">
+              <div class="flow-root">
+                <ul class="-mb-8">
+                  <li *ngFor="let activity of recentActivity(); let last = last">
+                    <div class="relative pb-8" [class.pb-0]="last">
+                      <span *ngIf="!last" class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                      <div class="relative flex space-x-3">
+                        <div>
+                          <span class="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white"
+                                [class.bg-green-500]="activity.type === 'scheduled'"
+                                [class.bg-blue-500]="activity.type === 'updated'"
+                                [class.bg-red-500]="activity.type === 'cancelled'">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path *ngIf="activity.type === 'scheduled'" fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                              <path *ngIf="activity.type === 'updated'" fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"></path>
+                              <path *ngIf="activity.type === 'cancelled'" fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                          <div>
+                            <p class="text-sm text-gray-900">{{ activity.description }}</p>
+                            <p class="mt-1 text-xs text-gray-500">{{ activity.timestamp | date:'short' }}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <ng-template #noActivity>
+              <div class="text-center py-4">
+                <svg class="mx-auto h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p class="mt-2 text-sm text-gray-500">No recent activity</p>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!isLoading() && !classroom()" class="text-center py-12">
+    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+    </svg>
+    <h3 class="mt-2 text-sm font-medium text-gray-900">Classroom not found</h3>
+    <p class="mt-1 text-sm text-gray-500">The classroom you're looking for doesn't exist or has been removed.</p>
+    <div class="mt-6">
+      <button
+        routerLink="/classrooms"
+        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        Go back to classrooms
+      </button>
+    </div>
+  </div>
+</div>

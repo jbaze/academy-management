@@ -1,0 +1,189 @@
+<div class="p-6 space-y-6">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+      <p class="mt-1 text-sm text-gray-500">Welcome back! Here's what's happening at your academy.</p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+      <button
+        (click)="refreshDashboard()"
+        class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div *ngIf="stats(); else loadingStats" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <app-stats-card
+      title="Total Students"
+      [value]="stats()!.totalStudents"
+      icon="users"
+      color="blue"
+      [trend]="{ value: 12, isPositive: true }">
+    </app-stats-card>
+
+    <app-stats-card
+      title="Active Mentors"
+      [value]="stats()!.totalMentors"
+      icon="academic"
+      color="green"
+      [trend]="{ value: 8, isPositive: true }">
+    </app-stats-card>
+
+    <app-stats-card
+      title="Running Courses"
+      [value]="stats()!.totalCourses"
+      icon="book"
+      color="purple"
+      [trend]="{ value: 3, isPositive: false }">
+    </app-stats-card>
+
+    <app-stats-card
+      title="Monthly Revenue"
+      [value]="'$' + (stats()!.monthlyRevenue || 0).toLocaleString()"
+      icon="dollar"
+      color="yellow"
+      [trend]="{ value: 15, isPositive: true }">
+    </app-stats-card>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <a routerLink="/students/new" class="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors duration-200 group">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-medium text-gray-900">Add Student</h3>
+            <p class="text-sm text-gray-500">Register new student</p>
+          </div>
+        </div>
+      </a>
+
+      <a routerLink="/mentors/new" class="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors duration-200 group">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-medium text-gray-900">Add Mentor</h3>
+            <p class="text-sm text-gray-500">Register new mentor</p>
+          </div>
+        </div>
+      </a>
+
+      <a routerLink="/courses/new" class="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors duration-200 group">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200">
+            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-medium text-gray-900">Create Course</h3>
+            <p class="text-sm text-gray-500">Set up new course</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Left Column -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Chart Widget -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Course Enrollment Overview</h2>
+        <app-chart-widget
+          title="Students by Course"
+          type="bar"
+          [loading]="loading()">
+        </app-chart-widget>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-gray-900">Recent Activity</h2>
+          <a routerLink="/activity" class="text-sm text-indigo-600 hover:text-indigo-500">View all</a>
+        </div>
+        <app-recent-activity
+          [activities]="stats()?.recentActivity || []"
+          [loading]="loading()">
+        </app-recent-activity>
+      </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="space-y-6">
+      <!-- Upcoming Classes -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-gray-900">Upcoming Classes</h2>
+          <a routerLink="/scheduling" class="text-sm text-indigo-600 hover:text-indigo-500">View schedule</a>
+        </div>
+        <app-upcoming-classes
+          [classes]="stats()?.upcomingClasses || []"
+          [loading]="loading()">
+        </app-upcoming-classes>
+      </div>
+
+      <!-- Pending Tasks -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Pending Tasks</h2>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+            <div class="flex items-center space-x-3">
+              <div class="w-2 h-2 bg-yellow-400 rounded-full"></div>
+              <span class="text-sm font-medium text-gray-900">Review applications</span>
+            </div>
+            <span class="text-xs text-gray-500">3 pending</span>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
+            <div class="flex items-center space-x-3">
+              <div class="w-2 h-2 bg-red-400 rounded-full"></div>
+              <span class="text-sm font-medium text-gray-900">Overdue payments</span>
+            </div>
+            <span class="text-xs text-gray-500">5 overdue</span>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+            <div class="flex items-center space-x-3">
+              <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+              <span class="text-sm font-medium text-gray-900">Schedule conflicts</span>
+            </div>
+            <span class="text-xs text-gray-500">2 conflicts</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Template -->
+<ng-template #loadingStats>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div *ngFor="let i of [1,2,3,4]" class="bg-white rounded-lg shadow-md p-6">
+      <div class="animate-pulse">
+        <div class="flex items-center justify-between mb-4">
+          <div class="h-4 bg-gray-200 rounded w-20"></div>
+          <div class="w-8 h-8 bg-gray-200 rounded"></div>
+        </div>
+        <div class="h-8 bg-gray-200 rounded w-16 mb-2"></div>
+        <div class="h-3 bg-gray-200 rounded w-24"></div>
+      </div>
+    </div>
+  </div>
+</ng-template>

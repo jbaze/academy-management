@@ -1,0 +1,35 @@
+.not-found-container {
+  @apply min-h-screen flex items-center justify-center bg-gray-50;
+}
+
+.not-found-content {
+  @apply max-w-md w-full text-center space-y-6;
+}
+
+.not-found-icon {
+  @apply mx-auto h-24 w-24 flex items-center justify-center rounded-full bg-gray-100;
+
+  svg {
+    @apply h-12 w-12 text-gray-600;
+  }
+}
+
+.not-found-title {
+  @apply text-6xl font-bold text-gray-900;
+}
+
+.not-found-subtitle {
+  @apply text-2xl font-semibold text-gray-700;
+}
+
+.not-found-description {
+  @apply text-gray-600;
+}
+
+.not-found-actions {
+  @apply space-y-4;
+}
+
+.not-found-footer {
+  @apply mt-8 text-sm text-gray-500;
+}

@@ -1,0 +1,338 @@
+<!-- src/app/features/mentors/mentor-form/mentor-form.component.html -->
+<div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="mb-8">
+    <nav class="flex items-center space-x-2 text-sm text-gray-500 mb-4">
+      <a routerLink="/mentors" class="hover:text-gray-700">Mentors</a>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+      <span class="text-gray-900">{{ isEditing() ? 'Edit Mentor' : 'New Mentor' }}</span>
+    </nav>
+
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">
+          {{ isEditing() ? 'Edit Mentor' : 'Add New Mentor' }}
+        </h1>
+        <p class="mt-1 text-gray-600">
+          {{ isEditing() ? 'Update mentor information and availability' : 'Create a new mentor profile with specializations and schedule' }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading()" class="flex items-center justify-center py-12">
+    <div class="flex flex-col items-center space-y-3">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      <p class="text-sm text-gray-500">Loading mentor data...</p>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div *ngIf="!isLoading()" class="bg-white shadow-xl rounded-lg">
+    <form [formGroup]="mentorForm" (ngSubmit)="onSubmit()" class="space-y-8 p-6">
+
+      <!-- Basic Information Section -->
+      <div class="border-b border-gray-200 pb-8">
+        <h2 class="text-lg font-medium text-gray-900 mb-6">Basic Information</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- User Selection -->
+          <div class="md:col-span-2">
+            <label for="userId" class="block text-sm font-medium text-gray-700 mb-2">
+              Select User Account <span class="text-red-500">*</span>
+            </label>
+            <select
+              id="userId"
+              formControlName="userId"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              [class.border-red-500]="userId?.invalid && userId?.touched">
+              <option value="">Select a user...</option>
+              <option
+                *ngFor="let user of mentorUsers()"
+                [value]="user.id">
+                {{ user.firstName }} {{ user.lastName }} ({{ user.email }})
+              </option>
+            </select>
+            <div *ngIf="userId?.invalid && userId?.touched" class="text-red-500 text-xs mt-1">
+              Please select a user account
+            </div>
+          </div>
+
+          <!-- Experience -->
+          <div>
+            <label for="experience" class="block text-sm font-medium text-gray-700 mb-2">
+              Years of Experience <span class="text-red-500">*</span>
+            </label>
+            <input
+              id="experience"
+              type="number"
+              formControlName="experience"
+              min="0"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              [class.border-red-500]="experience?.invalid && experience?.touched"
+              placeholder="0">
+            <div *ngIf="experience?.invalid && experience?.touched" class="text-red-500 text-xs mt-1">
+              <span *ngIf="experience?.errors?.['required']">Experience is required</span>
+              <span *ngIf="experience?.errors?.['min']">Experience cannot be negative</span>
+            </div>
+          </div>
+
+          <!-- Hourly Rate -->
+          <div>
+            <label for="hourlyRate" class="block text-sm font-medium text-gray-700 mb-2">
+              Hourly Rate ($) <span class="text-red-500">*</span>
+            </label>
+            <input
+              id="hourlyRate"
+              type="number"
+              formControlName="hourlyRate"
+              min="0"
+              step="0.01"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              [class.border-red-500]="hourlyRate?.invalid && hourlyRate?.touched"
+              placeholder="0.00">
+            <div *ngIf="hourlyRate?.invalid && hourlyRate?.touched" class="text-red-500 text-xs mt-1">
+              <span *ngIf="hourlyRate?.errors?.['required']">Hourly rate is required</span>
+              <span *ngIf="hourlyRate?.errors?.['min']">Hourly rate cannot be negative</span>
+            </div>
+          </div>
+
+          <!-- Bio -->
+          <div class="md:col-span-2">
+            <label for="bio" class="block text-sm font-medium text-gray-700 mb-2">
+              Biography <span class="text-red-500">*</span>
+            </label>
+            <textarea
+              id="bio"
+              formControlName="bio"
+              rows="4"
+              maxlength="500"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              [class.border-red-500]="bio?.invalid && bio?.touched"
+              placeholder="Tell us about the mentor's background, teaching philosophy, and experience..."></textarea>
+            <div class="flex justify-between items-center mt-1">
+              <div *ngIf="bio?.invalid && bio?.touched" class="text-red-500 text-xs">
+                <span *ngIf="bio?.errors?.['required']">Biography is required</span>
+                <span *ngIf="bio?.errors?.['maxlength']">Biography must be less than 500 characters</span>
+              </div>
+              <span class="text-xs text-gray-500">{{ bio?.value?.length || 0 }}/500</span>
+            </div>
+          </div>
+
+          <!-- Active Status -->
+          <div class="md:col-span-2">
+            <div class="flex items-center">
+              <input
+                id="isActive"
+                type="checkbox"
+                formControlName="isActive"
+                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+              <label for="isActive" class="ml-2 block text-sm text-gray-900">
+                Active mentor (available for course assignments)
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Specializations Section -->
+      <div class="border-b border-gray-200 pb-8">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-lg font-medium text-gray-900">Specializations</h2>
+          <button
+            type="button"
+            (click)="addSpecialization()"
+            class="bg-indigo-600 text-white px-3 py-1 rounded-md text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            + Add Specialization
+          </button>
+        </div>
+
+        <div class="space-y-3" formArrayName="specialization">
+          <div
+            *ngFor="let spec of specializationArray.controls; let i = index"
+            class="flex items-center space-x-3">
+            <div class="flex-1">
+              <select
+                [formControlName]="i"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                [class.border-red-500]="spec.invalid && spec.touched">
+                <option value="">Select a subject...</option>
+                <option *ngFor="let subject of subjectOptions" [value]="subject">
+                  {{ subject }}
+                </option>
+              </select>
+              <div *ngIf="spec.invalid && spec.touched" class="text-red-500 text-xs mt-1">
+                Please select a specialization
+              </div>
+            </div>
+            <button
+              type="button"
+              (click)="removeSpecialization(i)"
+              class="text-red-600 hover:text-red-800 p-1">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="specializationArray.length === 0" class="text-center py-4 text-gray-500">
+          No specializations added. Click "Add Specialization" to get started.
+        </div>
+      </div>
+
+      <!-- Qualifications Section -->
+      <div class="border-b border-gray-200 pb-8">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-lg font-medium text-gray-900">Qualifications & Certifications</h2>
+          <button
+            type="button"
+            (click)="addQualification()"
+            class="bg-indigo-600 text-white px-3 py-1 rounded-md text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            + Add Qualification
+          </button>
+        </div>
+
+        <div class="space-y-3" formArrayName="qualifications">
+          <div
+            *ngFor="let qual of qualificationsArray.controls; let i = index"
+            class="flex items-center space-x-3">
+            <div class="flex-1">
+              <input
+                type="text"
+                [formControlName]="i"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                [class.border-red-500]="qual.invalid && qual.touched"
+                placeholder="e.g., B.S. Mathematics, Teaching Certificate, PhD in Physics">
+              <div *ngIf="qual.invalid && qual.touched" class="text-red-500 text-xs mt-1">
+                Please enter a qualification
+              </div>
+            </div>
+            <button
+              type="button"
+              (click)="removeQualification(i)"
+              class="text-red-600 hover:text-red-800 p-1">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="qualificationsArray.length === 0" class="text-center py-4 text-gray-500">
+          No qualifications added. Click "Add Qualification" to get started.
+        </div>
+      </div>
+
+      <!-- Available Hours Section -->
+      <div class="pb-8">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-lg font-medium text-gray-900">Available Hours</h2>
+          <button
+            type="button"
+            (click)="addAvailableHour()"
+            class="bg-indigo-600 text-white px-3 py-1 rounded-md text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            + Add Time Slot
+          </button>
+        </div>
+
+        <div class="space-y-4" formArrayName="availableHours">
+          <div
+            *ngFor="let hour of availableHoursArray.controls; let i = index"
+            [formGroupName]="i"
+            class="bg-gray-50 p-4 rounded-lg">
+
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="text-sm font-medium text-gray-900">Time Slot {{ i + 1 }}</h4>
+              <button
+                type="button"
+                (click)="removeAvailableHour(i)"
+                class="text-red-600 hover:text-red-800 p-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <!-- Day of Week -->
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Day of Week</label>
+                <select
+                  formControlName="dayOfWeek"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                  <option value="">Select day...</option>
+                  <option *ngFor="let day of daysOfWeek" [value]="day.value">
+                    {{ day.label }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Start Time -->
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Start Time</label>
+                <input
+                  type="time"
+                  formControlName="startTime"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+              </div>
+
+              <!-- End Time -->
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">End Time</label>
+                <input
+                  type="time"
+                  formControlName="endTime"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+              </div>
+            </div>
+
+            <!-- Validation Messages -->
+            <div *ngIf="hour.get('dayOfWeek')?.invalid && hour.get('dayOfWeek')?.touched" class="text-red-500 text-xs mt-2">
+              Please select a day of week
+            </div>
+            <div *ngIf="hour.get('startTime')?.invalid && hour.get('startTime')?.touched" class="text-red-500 text-xs mt-1">
+              Please select a start time
+            </div>
+            <div *ngIf="hour.get('endTime')?.invalid && hour.get('endTime')?.touched" class="text-red-500 text-xs mt-1">
+              Please select an end time
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="availableHoursArray.length === 0" class="text-center py-4 text-gray-500">
+          No available hours added. Click "Add Time Slot" to get started.
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
+        <button
+          type="button"
+          (click)="onCancel()"
+          class="px-6 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          [disabled]="mentorForm.invalid || isLoading()"
+          class="px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
+          <span *ngIf="isLoading()">
+            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            {{ isEditing() ? 'Updating...' : 'Creating...' }}
+          </span>
+          <span *ngIf="!isLoading()">
+            {{ isEditing() ? 'Update Mentor' : 'Create Mentor' }}
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

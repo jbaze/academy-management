@@ -1,0 +1,21 @@
+.availability-form {
+  @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+}
+
+.availability-result {
+  &.available {
+    @apply bg-green-50 border-green-200 text-green-800;
+  }
+
+  &.unavailable {
+    @apply bg-red-50 border-red-200 text-red-800;
+  }
+}
+
+.form-field {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500;
+}
+
+.check-button {
+  @apply px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 disabled:opacity-50 transition-colors duration-200;
+}

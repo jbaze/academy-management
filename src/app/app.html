@@ -1,0 +1,13 @@
+<div class="min-h-screen">
+  <!-- Show main layout for authenticated users -->
+  <app-main-layout *ngIf="isAuthenticated()"></app-main-layout>
+
+  <!-- Show auth pages for non-authenticated users -->
+  <div *ngIf="!isAuthenticated()">
+    <router-outlet></router-outlet>
+  </div>
+
+  <!-- Global components -->
+  <app-loading-spinner></app-loading-spinner>
+  <app-toast></app-toast>
+</div>

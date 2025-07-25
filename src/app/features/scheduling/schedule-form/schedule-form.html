@@ -1,0 +1,209 @@
+<div class="max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">
+      {{ isEditing() ? 'Edit Schedule' : 'Create New Schedule' }}
+    </h1>
+    <p class="mt-2 text-gray-600">
+      {{ isEditing() ? 'Update the schedule details' : 'Set up a new class schedule' }}
+    </p>
+  </div>
+
+  <!-- Form -->
+  <form [formGroup]="scheduleForm" (ngSubmit)="onSubmit()" class="bg-white rounded-lg shadow p-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Course Selection -->
+      <div>
+        <label for="courseId" class="block text-sm font-medium text-gray-700 mb-1">
+          Course <span class="text-red-500">*</span>
+        </label>
+        <select
+          id="courseId"
+          formControlName="courseId"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          [class.border-red-500]="courseId?.invalid && courseId?.touched">
+          <option value="">Select a course</option>
+          <option *ngFor="let course of courses()" [value]="course.id">
+            {{ course.name }}
+          </option>
+        </select>
+        <div *ngIf="courseId?.invalid && courseId?.touched" class="text-red-500 text-xs mt-1">
+          Course is required
+        </div>
+      </div>
+
+      <!-- Mentor Selection -->
+      <div>
+        <label for="mentorId" class="block text-sm font-medium text-gray-700 mb-1">
+          Mentor <span class="text-red-500">*</span>
+        </label>
+        <select
+          id="mentorId"
+          formControlName="mentorId"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          [class.border-red-500]="mentorId?.invalid && mentorId?.touched">
+          <option value="">Select a mentor</option>
+          <option *ngFor="let mentor of mentors()" [value]="mentor.id">
+            {{ getMentorDisplayName(mentor) }}
+          </option>
+        </select>
+        <div *ngIf="mentorId?.invalid && mentorId?.touched" class="text-red-500 text-xs mt-1">
+          Mentor is required
+        </div>
+      </div>
+
+      <!-- Classroom Selection -->
+      <div>
+        <label for="classroomId" class="block text-sm font-medium text-gray-700 mb-1">
+          Classroom <span class="text-red-500">*</span>
+        </label>
+        <select
+          id="classroomId"
+          formControlName="classroomId"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          [class.border-red-500]="classroomId?.invalid && classroomId?.touched">
+          <option value="">Select a classroom</option>
+          <option *ngFor="let classroom of classrooms()" [value]="classroom.id">
+            {{ classroom.name }} ({{ classroom.capacity }} seats)
+          </option>
+        </select>
+        <div *ngIf="classroomId?.invalid && classroomId?.touched" class="text-red-500 text-xs mt-1">
+          Classroom is required
+        </div>
+      </div>
+
+      <!-- Day of Week -->
+      <div>
+        <label for="dayOfWeek" class="block text-sm font-medium text-gray-700 mb-1">
+          Day of Week <span class="text-red-500">*</span>
+        </label>
+        <select
+          id="dayOfWeek"
+          formControlName="dayOfWeek"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          [class.border-red-500]="dayOfWeek?.invalid && dayOfWeek?.touched">
+          <option value="">Select day</option>
+          <option *ngFor="let day of daysOfWeek" [value]="day.value">
+            {{ day.label }}
+          </option>
+        </select>
+        <div *ngIf="dayOfWeek?.invalid && dayOfWeek?.touched" class="text-red-500 text-xs mt-1">
+          Day of week is required
+        </div>
+      </div>
+
+      <!-- Start Time -->
+      <div>
+        <label for="startTime" class="block text-sm font-medium text-gray-700 mb-1">
+          Start Time <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="startTime"
+          type="time"
+          formControlName="startTime"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          [class.border-red-500]="startTime?.invalid && startTime?.touched">
+        <div *ngIf="startTime?.invalid && startTime?.touched" class="text-red-500 text-xs mt-1">
+          Start time is required
+        </div>
+      </div>
+
+      <!-- End Time -->
+      <div>
+        <label for="endTime" class="block text-sm font-medium text-gray-700 mb-1">
+          End Time <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="endTime"
+          type="time"
+          formControlName="endTime"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          [class.border-red-500]="endTime?.invalid && endTime?.touched">
+        <div *ngIf="endTime?.invalid && endTime?.touched" class="text-red-500 text-xs mt-1">
+          End time is required
+        </div>
+      </div>
+
+      <!-- Start Date -->
+      <div>
+        <label for="startDate" class="block text-sm font-medium text-gray-700 mb-1">
+          Start Date <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="startDate"
+          type="date"
+          formControlName="startDate"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          [class.border-red-500]="startDate?.invalid && startDate?.touched">
+        <div *ngIf="startDate?.invalid && startDate?.touched" class="text-red-500 text-xs mt-1">
+          Start date is required
+        </div>
+      </div>
+
+      <!-- End Date -->
+      <div>
+        <label for="endDate" class="block text-sm font-medium text-gray-700 mb-1">
+          End Date <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="endDate"
+          type="date"
+          formControlName="endDate"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          [class.border-red-500]="endDate?.invalid && endDate?.touched">
+        <div *ngIf="endDate?.invalid && endDate?.touched" class="text-red-500 text-xs mt-1">
+          End date is required
+        </div>
+      </div>
+    </div>
+
+    <!-- Recurring Options -->
+    <div class="mt-6">
+      <div class="flex items-center">
+        <input
+          id="isRecurring"
+          type="checkbox"
+          formControlName="isRecurring"
+          class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+        <label for="isRecurring" class="ml-2 block text-sm text-gray-900">
+          Recurring Schedule
+        </label>
+      </div>
+    </div>
+
+    <!-- Active Status -->
+    <div class="mt-4">
+      <div class="flex items-center">
+        <input
+          id="isActive"
+          type="checkbox"
+          formControlName="isActive"
+          class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+        <label for="isActive" class="ml-2 block text-sm text-gray-900">
+          Active Schedule
+        </label>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="mt-8 flex justify-end space-x-3">
+      <button
+        type="button"
+        (click)="onCancel()"
+        class="bg-gray-300 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500">
+        Cancel
+      </button>
+      <button
+        type="submit"
+        [disabled]="scheduleForm.invalid || isLoading()"
+        class="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50">
+        <span *ngIf="isLoading()">
+          {{ isEditing() ? 'Updating...' : 'Creating...' }}
+        </span>
+        <span *ngIf="!isLoading()">
+          {{ isEditing() ? 'Update Schedule' : 'Create Schedule' }}
+        </span>
+      </button>
+    </div>
+  </form>
+</div>

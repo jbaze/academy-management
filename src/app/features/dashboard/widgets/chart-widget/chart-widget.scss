@@ -1,0 +1,283 @@
+.chart-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 24px;
+            margin: 20px 0;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .chart-type-icon {
+            width: 16px;
+            height: 16px;
+            color: #6b7280;
+        }
+
+        .bar-chart {
+            position: relative;
+        }
+
+        .chart-area {
+            height: 256px;
+            display: flex;
+            align-items: end;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding-left: 32px;
+            position: relative;
+        }
+
+        .bar-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .bar-item:hover {
+            opacity: 0.8;
+        }
+
+        .bar-container {
+            width: 100%;
+            height: 200px;
+            background: #f3f4f6;
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .bar {
+            width: 100%;
+            border-radius: 4px 4px 0 0;
+            transition: all 0.5s ease-in-out;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .bar-value {
+            padding-bottom: 4px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .bar-item:hover .bar-value {
+            opacity: 1;
+        }
+
+        .bar-label {
+            margin-top: 8px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .bar-label-text {
+            font-size: 12px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .bar-label-value {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .y-axis-labels {
+            position: absolute;
+            left: 0;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #6b7280;
+            margin-left: -24px;
+            top: 0;
+        }
+
+        .pie-chart {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+        }
+
+        .pie-container {
+            position: relative;
+        }
+
+        .pie-svg {
+            width: 256px;
+            height: 256px;
+            transform: rotate(-90deg);
+        }
+
+        .pie-segment {
+            transition: all 0.5s;
+            cursor: pointer;
+        }
+
+        .pie-segment:hover {
+            stroke-width: 12;
+        }
+
+        .pie-center {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .pie-center-total {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .pie-center-label {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .pie-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .legend-item:hover {
+            opacity: 0.75;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .legend-label {
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .legend-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1f2937;
+        }
+
+        .legend-percentage {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .loading-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 256px;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 2px solid #e5e7eb;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .empty-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 256px;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .empty-icon {
+            width: 48px;
+            height: 48px;
+            color: #9ca3af;
+        }
+
+        .empty-text {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .chart-controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .chart-type-btn {
+            padding: 8px 16px;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .chart-type-btn:hover {
+            background: #f9fafb;
+        }
+
+        .chart-type-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }

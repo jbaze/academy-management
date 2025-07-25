@@ -1,0 +1,44 @@
+<div class="bg-white rounded-lg shadow-md p-6 border-l-4" [class]="getColorClasses()">
+  <div *ngIf="!loading; else loadingTemplate" class="flex items-center justify-between">
+    <div>
+      <p class="text-sm font-medium text-gray-600">{{ title }}</p>
+      <p class="text-2xl font-bold text-gray-900">{{ value }}</p>
+      <div *ngIf="trend" class="flex items-center mt-2">
+        <svg
+          class="w-4 h-4 mr-1"
+          [class]="trend.isPositive ? 'text-green-500' : 'text-red-500'"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            [attr.d]="trend.isPositive ? 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' : 'M13 17h8m0 0V9m0 8l-8-8-4 4-6-6'">
+          </path>
+        </svg>
+        <span class="text-sm" [class]="trend.isPositive ? 'text-green-600' : 'text-red-600'">
+          {{ trend.value }}%
+        </span>
+      </div>
+    </div>
+    <div class="w-12 h-12 rounded-lg flex items-center justify-center" [class]="getColorClasses()">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getIconSvg()"></path>
+      </svg>
+    </div>
+  </div>
+
+  <ng-template #loadingTemplate>
+    <div class="animate-pulse">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="h-4 bg-gray-200 rounded w-20 mb-2"></div>
+          <div class="h-8 bg-gray-200 rounded w-16 mb-2"></div>
+          <div class="h-3 bg-gray-200 rounded w-12"></div>
+        </div>
+        <div class="w-12 h-12 bg-gray-200 rounded-lg"></div>
+      </div>
+    </div>
+  </ng-template>
+</div>

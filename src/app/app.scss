@@ -1,0 +1,17 @@
+.app-container {
+  @apply min-h-screen bg-gray-50;
+}
+
+.main-content {
+  @apply flex-1;
+}
+
+// Global loading overlay
+.global-loading {
+  @apply fixed inset-0 z-40;
+}
+
+// Global toast container
+.global-toast {
+  @apply fixed top-4 right-4 z-50;
+}

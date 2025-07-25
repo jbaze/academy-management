@@ -1,0 +1,399 @@
+<div class="max-w-7xl mx-auto p-6">
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <nav class="flex items-center space-x-2 text-sm text-gray-500 mb-2">
+          <a routerLink="/students" class="hover:text-gray-700">Students</a>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+          <a [routerLink]="['/students', student()?.id]" class="hover:text-gray-700">{{ student()?.firstName }} {{ student()?.lastName }}</a>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+          <span class="text-gray-900">Progress</span>
+        </nav>
+        <h1 class="text-3xl font-bold text-gray-900">Student Progress Report</h1>
+        <p class="mt-1 text-sm text-gray-600">
+          Track academic performance and learning milestones for {{ student()?.firstName }} {{ student()?.lastName }}
+        </p>
+      </div>
+      <div class="flex space-x-3">
+        <button
+          (click)="exportProgress()"
+          class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          Export Report
+        </button>
+        <button
+          *ngIf="canEdit()"
+          (click)="addProgressEntry()"
+          class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+          Add Entry
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading(); else loadingTemplate">
+    <!-- Student Info Card -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+      <div class="p-6">
+        <div class="flex items-center space-x-4">
+          <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center">
+            <span class="text-indigo-600 font-bold text-xl">
+              {{ student()?.firstName?.charAt(0) }}{{ student()?.lastName?.charAt(0) }}
+            </span>
+          </div>
+          <div class="flex-1">
+            <h2 class="text-xl font-semibold text-gray-900">
+              {{ student()?.firstName }} {{ student()?.lastName }}
+            </h2>
+            <p class="text-gray-600">{{ student()?.academicLevel }} • Age {{ getAge() }}</p>
+            <div class="flex items-center mt-2 space-x-4">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                {{ student()?.enrolledCourses?.length || 0 }} Active Courses
+              </span>
+              <span class="text-sm text-gray-500">
+                Started: {{ student()?.createdAt | date:'mediumDate' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress Overview Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <!-- Overall Grade -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Overall Grade</p>
+            <p class="text-2xl font-bold text-gray-900">{{ overallGrade() }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assignments Completed -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Assignments</p>
+            <p class="text-2xl font-bold text-gray-900">{{ completedAssignments() }}/{{ totalAssignments() }}</p>
+            <p class="text-xs text-gray-500">{{ completionRate() }}% completed</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Attendance Rate -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Attendance</p>
+            <p class="text-2xl font-bold text-gray-900">{{ attendanceRate() }}%</p>
+            <p class="text-xs text-gray-500">{{ attendedClasses() }}/{{ totalClasses() }} classes</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Improvement Trend -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Trend</p>
+            <p class="text-2xl font-bold" [class]="getTrendClass()">{{ improvementTrend() }}</p>
+            <p class="text-xs text-gray-500">vs last month</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Course Progress Section -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">Course Progress</h3>
+        <p class="text-sm text-gray-600">Performance breakdown by subject</p>
+      </div>
+      <div class="p-6">
+        <div class="space-y-6">
+          <div *ngFor="let courseProgress of courseProgressData(); trackBy: trackByCourse" class="border border-gray-200 rounded-lg p-4">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <h4 class="font-medium text-gray-900">{{ courseProgress.courseName }}</h4>
+                <p class="text-sm text-gray-600">{{ courseProgress.mentorName }}</p>
+              </div>
+              <div class="text-right">
+                <span class="text-lg font-bold" [class]="getGradeClass(courseProgress.currentGrade)">
+                  {{ courseProgress.currentGrade }}
+                </span>
+                <p class="text-xs text-gray-500">Current Grade</p>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mb-3">
+              <div class="flex justify-between text-sm text-gray-600 mb-1">
+                <span>Progress</span>
+                <span>{{ courseProgress.completionPercentage }}%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  class="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+                  [style.width.%]="courseProgress.completionPercentage">
+                </div>
+              </div>
+            </div>
+
+            <!-- Course Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+              <div>
+                <p class="text-gray-600">Assignments</p>
+                <p class="font-semibold text-gray-900">{{ courseProgress.completedAssignments }}/{{ courseProgress.totalAssignments }}</p>
+              </div>
+              <div>
+                <p class="text-gray-600">Attendance</p>
+                <p class="font-semibold text-gray-900">{{ courseProgress.attendanceRate }}%</p>
+              </div>
+              <div>
+                <p class="text-gray-600">Last Quiz</p>
+                <p class="font-semibold" [class]="getGradeClass(courseProgress.lastQuizScore)">{{ courseProgress.lastQuizScore }}</p>
+              </div>
+              <div>
+                <p class="text-gray-600">Next Assignment</p>
+                <p class="font-semibold text-gray-900">{{ courseProgress.nextAssignment | date:'shortDate' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity & Progress Entries -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Recent Activities -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Recent Activities</h3>
+          <p class="text-sm text-gray-600">Latest student achievements and submissions</p>
+        </div>
+        <div class="p-6">
+          <div class="space-y-4">
+            <div *ngFor="let activity of recentActivities(); trackBy: trackByActivity" class="flex items-start space-x-3">
+              <div class="flex-shrink-0">
+                <div [class]="getActivityIconClass(activity.type)" class="w-8 h-8 rounded-full flex items-center justify-center">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path *ngIf="activity.type === 'assignment'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    <path *ngIf="activity.type === 'quiz'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <path *ngIf="activity.type === 'attendance'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <path *ngIf="activity.type === 'achievement'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                  </svg>
+                </div>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                  <p class="text-sm font-medium text-gray-900">{{ activity.title }}</p>
+                  <p class="text-xs text-gray-500">{{ activity.date | date:'short' }}</p>
+                </div>
+                <p class="text-sm text-gray-600 mt-1">{{ activity.description }}</p>
+                <div *ngIf="activity.score" class="mt-2">
+                  <span [class]="'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ' + getScoreBadgeClass(activity.score)">
+                    Score: {{ activity.score }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Show more button -->
+          <div class="mt-6 text-center">
+            <button
+              (click)="loadMoreActivities()"
+              class="text-indigo-600 hover:text-indigo-500 text-sm font-medium">
+              View More Activities
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress Timeline -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">Progress Timeline</h3>
+              <p class="text-sm text-gray-600">Milestone achievements and progress notes</p>
+            </div>
+            <button
+              *ngIf="canEdit()"
+              (click)="addMilestone()"
+              class="text-indigo-600 hover:text-indigo-500 text-sm font-medium">
+              Add Milestone
+            </button>
+          </div>
+        </div>
+        <div class="p-6">
+          <div class="space-y-6">
+            <div *ngFor="let milestone of progressTimeline(); trackBy: trackByMilestone; last as isLast" class="relative">
+              <div class="flex items-start space-x-3">
+                <div class="flex-shrink-0">
+                  <div [class]="getMilestoneIconClass(milestone.type)" class="w-8 h-8 rounded-full flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path *ngIf="milestone.type === 'achievement'" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                      <path *ngIf="milestone.type === 'improvement'" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+                      <path *ngIf="milestone.type === 'goal'" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                  </div>
+                  <div *ngIf="!isLast" class="absolute top-8 left-4 w-0.5 h-6 bg-gray-200"></div>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between">
+                    <p class="text-sm font-medium text-gray-900">{{ milestone.title }}</p>
+                    <p class="text-xs text-gray-500">{{ milestone.date | date:'shortDate' }}</p>
+                  </div>
+                  <p class="text-sm text-gray-600 mt-1">{{ milestone.description }}</p>
+                  <div *ngIf="milestone.badge" class="mt-2">
+                    <span [class]="'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ' + milestone.badge.class">
+                      {{ milestone.badge.text }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Goals and Recommendations -->
+    <div class="mt-8 bg-white rounded-lg shadow-sm border border-gray-200">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">Goals & Recommendations</h3>
+        <p class="text-sm text-gray-600">Current learning objectives and mentor suggestions</p>
+      </div>
+      <div class="p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Current Goals -->
+          <div>
+            <h4 class="font-medium text-gray-900 mb-4">Current Goals</h4>
+            <div class="space-y-3">
+              <div *ngFor="let goal of currentGoals(); trackBy: trackByGoal" class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
+                <div class="flex-shrink-0 mt-0.5">
+                  <div class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                    <svg class="w-3 h-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                  </div>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm font-medium text-gray-900">{{ goal.title }}</p>
+                  <p class="text-sm text-gray-600 mt-1">{{ goal.description }}</p>
+                  <div class="flex items-center justify-between mt-2">
+                    <div class="flex items-center space-x-2">
+                      <span class="text-xs text-gray-500">Target: {{ goal.targetDate | date:'shortDate' }}</span>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                      <div class="w-16 bg-gray-200 rounded-full h-1.5">
+                        <div
+                          class="bg-blue-600 h-1.5 rounded-full transition-all duration-300"
+                          [style.width.%]="goal.progress">
+                        </div>
+                      </div>
+                      <span class="text-xs text-gray-500">{{ goal.progress }}%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recommendations -->
+          <div>
+            <h4 class="font-medium text-gray-900 mb-4">Recommendations</h4>
+            <div class="space-y-3">
+              <div *ngFor="let recommendation of recommendations(); trackBy: trackByRecommendation" class="flex items-start space-x-3 p-3 bg-yellow-50 rounded-lg">
+                <div class="flex-shrink-0 mt-0.5">
+                  <div class="w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <svg class="w-3 h-3 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                    </svg>
+                  </div>
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center justify-between">
+                    <p class="text-sm font-medium text-gray-900">{{ recommendation.title }}</p>
+                    <span [class]="'text-xs px-2 py-1 rounded-full ' + getPriorityClass(recommendation.priority)">
+                      {{ recommendation.priority }}
+                    </span>
+                  </div>
+                  <p class="text-sm text-gray-600 mt-1">{{ recommendation.description }}</p>
+                  <p class="text-xs text-gray-500 mt-2">From: {{ recommendation.mentorName }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Template -->
+<ng-template #loadingTemplate>
+  <div class="animate-pulse">
+    <!-- Header Skeleton -->
+    <div class="mb-8">
+      <div class="h-8 bg-gray-200 rounded w-1/3 mb-2"></div>
+      <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+    </div>
+
+    <!-- Stats Cards Skeleton -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div *ngFor="let i of [1,2,3,4]" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-gray-200 rounded-lg"></div>
+          <div class="ml-4 space-y-2">
+            <div class="h-4 bg-gray-200 rounded w-20"></div>
+            <div class="h-6 bg-gray-200 rounded w-16"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Skeleton -->
+    <div class="space-y-6">
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
+        <div class="space-y-4">
+          <div *ngFor="let i of [1,2,3]" class="h-20 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

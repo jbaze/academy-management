@@ -1,0 +1,55 @@
+.profile-container {
+  @apply max-w-4xl mx-auto py-8 px-4;
+}
+
+.profile-card {
+  @apply bg-white shadow-xl rounded-lg overflow-hidden;
+}
+
+.profile-header {
+  @apply px-6 py-4 border-b border-gray-200 bg-gray-50;
+}
+
+.avatar-section {
+  @apply flex flex-col items-center space-y-4;
+}
+
+.avatar {
+  @apply w-32 h-32 rounded-full overflow-hidden bg-gray-300 flex items-center justify-center;
+
+  img {
+    @apply w-full h-full object-cover;
+  }
+
+  .initials {
+    @apply text-3xl font-semibold text-gray-500;
+  }
+}
+
+.form-section {
+  @apply space-y-6;
+}
+
+.form-group {
+  @apply space-y-1;
+
+  label {
+    @apply block text-sm font-medium text-gray-700;
+  }
+
+  input {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500;
+
+    &[readonly] {
+      @apply bg-gray-50 text-gray-500;
+    }
+
+    &.error {
+      @apply border-red-500 focus:ring-red-500 focus:border-red-500;
+    }
+  }
+}
+
+.action-buttons {
+  @apply flex items-center justify-end space-x-3 pt-6;
+}

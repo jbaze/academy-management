@@ -1,0 +1,321 @@
+/* src/app/features/mentors/mentor-form/mentor-form.component.scss */
+
+.form-container {
+  @apply max-w-4xl mx-auto py-8 px-4;
+}
+
+.form-header {
+  @apply mb-8;
+
+  .breadcrumb {
+    @apply flex items-center space-x-2 text-sm text-gray-500 mb-4;
+
+    a {
+      @apply hover:text-gray-700 transition-colors duration-200;
+    }
+
+    svg {
+      @apply w-4 h-4;
+    }
+  }
+
+  .title-section {
+    @apply flex items-center justify-between;
+
+    h1 {
+      @apply text-3xl font-bold text-gray-900;
+    }
+
+    p {
+      @apply mt-1 text-gray-600;
+    }
+  }
+}
+
+.form-card {
+  @apply bg-white shadow-xl rounded-lg overflow-hidden;
+}
+
+.form-section {
+  @apply border-b border-gray-200 pb-8;
+
+  &:last-child {
+    @apply border-b-0 pb-0;
+  }
+
+  .section-header {
+    @apply flex items-center justify-between mb-6;
+
+    h2 {
+      @apply text-lg font-medium text-gray-900;
+    }
+
+    .add-button {
+      @apply bg-indigo-600 text-white px-3 py-1 rounded-md text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200;
+    }
+  }
+}
+
+.form-grid {
+  @apply grid grid-cols-1 gap-6;
+
+  &.two-columns {
+    @apply md:grid-cols-2;
+  }
+}
+
+.form-group {
+  @apply space-y-1;
+
+  &.full-width {
+    @apply md:col-span-2;
+  }
+
+  label {
+    @apply block text-sm font-medium text-gray-700 mb-2;
+
+    .required {
+      @apply text-red-500;
+    }
+  }
+
+  input, select, textarea {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200;
+
+    &.error {
+      @apply border-red-500 focus:ring-red-500 focus:border-red-500;
+    }
+
+    &:disabled {
+      @apply bg-gray-50 text-gray-500 cursor-not-allowed;
+    }
+  }
+
+  textarea {
+    @apply resize-none;
+  }
+
+  .error-message {
+    @apply text-red-500 text-xs mt-1;
+  }
+
+  .character-count {
+    @apply text-xs text-gray-500 text-right;
+  }
+}
+
+.checkbox-group {
+  @apply flex items-center;
+
+  input[type="checkbox"] {
+    @apply h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded;
+  }
+
+  label {
+    @apply ml-2 block text-sm text-gray-900 mb-0;
+  }
+}
+
+.array-section {
+  @apply space-y-3;
+
+  .array-item {
+    @apply flex items-center space-x-3;
+
+    .item-input {
+      @apply flex-1;
+    }
+
+    .remove-button {
+      @apply text-red-600 hover:text-red-800 p-1 transition-colors duration-200;
+
+      svg {
+        @apply w-5 h-5;
+      }
+    }
+  }
+
+  .empty-state {
+    @apply text-center py-4 text-gray-500 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300;
+  }
+}
+
+.time-slot {
+  @apply bg-gray-50 p-4 rounded-lg border border-gray-200;
+
+  .slot-header {
+    @apply flex items-center justify-between mb-3;
+
+    h4 {
+      @apply text-sm font-medium text-gray-900;
+    }
+
+    .remove-button {
+      @apply text-red-600 hover:text-red-800 p-1 transition-colors duration-200;
+
+      svg {
+        @apply w-4 h-4;
+      }
+    }
+  }
+
+  .slot-fields {
+    @apply grid grid-cols-1 gap-4;
+
+    @media (min-width: 768px) {
+      @apply grid-cols-3;
+    }
+
+    .field-group {
+      @apply space-y-1;
+
+      label {
+        @apply block text-xs font-medium text-gray-700 mb-1;
+      }
+
+      input, select {
+        @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm;
+      }
+    }
+  }
+
+  .slot-errors {
+    @apply space-y-1 mt-2;
+
+    .error-message {
+      @apply text-red-500 text-xs;
+    }
+  }
+}
+
+.form-actions {
+  @apply flex items-center justify-end space-x-4 pt-6 border-t border-gray-200;
+
+  .cancel-button {
+    @apply px-6 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200;
+  }
+
+  .submit-button {
+    @apply px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200;
+
+    &:disabled {
+      @apply opacity-50 cursor-not-allowed;
+    }
+
+    .loading-spinner {
+      @apply animate-spin -ml-1 mr-2 h-4 w-4 text-white inline;
+    }
+  }
+}
+
+.loading-state {
+  @apply flex items-center justify-center py-12;
+
+  .loading-content {
+    @apply flex flex-col items-center space-y-3;
+
+    .spinner {
+      @apply animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600;
+    }
+
+    p {
+      @apply text-sm text-gray-500;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 640px) {
+  .form-grid.two-columns {
+    @apply grid-cols-1;
+  }
+
+  .time-slot .slot-fields {
+    @apply grid-cols-1;
+  }
+
+  .form-actions {
+    @apply flex-col space-x-0 space-y-3;
+
+    .cancel-button,
+    .submit-button {
+      @apply w-full;
+    }
+  }
+}
+
+// Animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-card {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.array-item,
+.time-slot {
+  animation: fadeInUp 0.2s ease-out;
+}
+
+// Focus styles
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  @apply ring-2 ring-indigo-500 ring-opacity-50;
+}
+
+// Hover effects
+.add-button:hover,
+.submit-button:hover,
+.cancel-button:hover {
+  @apply transform translate-y-[-1px] shadow-md;
+}
+
+.remove-button:hover {
+  @apply transform scale-110;
+}
+
+// Error state animations
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.form-group input.error,
+.form-group select.error,
+.form-group textarea.error {
+  animation: shake 0.3s ease-in-out;
+}
+
+// Custom scrollbar for textarea
+.form-group textarea {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f9fafb;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f9fafb;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+
+    &:hover {
+      background: #9ca3af;
+    }
+  }
+}

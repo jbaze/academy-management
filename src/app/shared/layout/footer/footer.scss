@@ -1,0 +1,27 @@
+.footer {
+  @apply bg-white border-t border-gray-200 mt-auto;
+}
+
+.footer-content {
+  @apply mx-auto py-4 px-4 sm:px-6 lg:px-8;
+}
+
+.status-indicator {
+  @apply flex items-center space-x-1 text-sm text-gray-500;
+
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+
+    &.online {
+      @apply bg-green-400;
+    }
+
+    &.offline {
+      @apply bg-red-400;
+    }
+
+    &.maintenance {
+      @apply bg-yellow-400;
+    }
+  }
+}

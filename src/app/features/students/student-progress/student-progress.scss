@@ -1,0 +1,837 @@
+/* src/app/features/students/student-progress/student-progress.component.scss */
+
+.progress-container {
+  @apply max-w-7xl mx-auto p-6;
+}
+
+/* Header Styles */
+.progress-header {
+  @apply mb-8;
+
+  h1 {
+    @apply text-3xl font-bold text-gray-900;
+  }
+
+  p {
+    @apply mt-1 text-sm text-gray-600;
+  }
+}
+
+/* Statistics Cards */
+.stats-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8;
+
+  .stat-card {
+    @apply bg-white rounded-lg shadow p-6 transition-shadow duration-200;
+
+    &:hover {
+      @apply shadow-lg;
+    }
+
+    .stat-icon {
+      @apply w-8 h-8 rounded-md flex items-center justify-center;
+
+      &.grade {
+        @apply bg-blue-100;
+
+        svg {
+          @apply w-5 h-5 text-blue-600;
+        }
+      }
+
+      &.attendance {
+        @apply bg-green-100;
+
+        svg {
+          @apply w-5 h-5 text-green-600;
+        }
+      }
+
+      &.courses {
+        @apply bg-purple-100;
+
+        svg {
+          @apply w-5 h-5 text-purple-600;
+        }
+      }
+
+      &.assignments {
+        @apply bg-yellow-100;
+
+        svg {
+          @apply w-5 h-5 text-yellow-600;
+        }
+      }
+    }
+
+    .stat-value {
+      @apply text-2xl font-semibold;
+
+      &.grade {
+        @apply text-blue-600;
+      }
+
+      &.attendance {
+        @apply text-green-600;
+      }
+
+      &.courses {
+        @apply text-purple-600;
+      }
+
+      &.assignments {
+        @apply text-yellow-600;
+      }
+    }
+
+    .stat-label {
+      @apply text-sm font-medium text-gray-500;
+    }
+  }
+}
+
+/* Course Selection */
+.course-selection {
+  @apply mb-6;
+
+  h2 {
+    @apply text-lg font-medium text-gray-900 mb-3;
+  }
+
+  .course-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
+  }
+
+  .course-card {
+    @apply p-4 border-2 rounded-lg text-left transition-colors cursor-pointer;
+
+    &.selected {
+      @apply border-indigo-500 bg-indigo-50;
+    }
+
+    &:not(.selected) {
+      @apply border-gray-200;
+
+      &:hover {
+        @apply border-gray-300 bg-gray-50;
+      }
+    }
+
+    h3 {
+      @apply font-medium text-gray-900;
+    }
+
+    .mentor-name {
+      @apply text-sm text-gray-600;
+    }
+
+    .course-stats {
+      @apply flex justify-between items-center mt-2;
+    }
+  }
+}
+
+/* Main Content Area */
+.main-content {
+  @apply bg-white rounded-lg shadow overflow-hidden;
+
+  .course-header {
+    @apply px-6 py-4 border-b border-gray-200;
+
+    h2 {
+      @apply text-xl font-semibold text-gray-900;
+    }
+
+    .mentor-info {
+      @apply text-sm text-gray-600;
+    }
+
+    .grade-display {
+      @apply text-center;
+
+      .grade-letter {
+        @apply text-2xl font-bold;
+      }
+
+      .grade-percentage {
+        @apply text-sm;
+      }
+
+      .grade-label {
+        @apply text-sm text-gray-500;
+      }
+    }
+  }
+}
+
+/* Navigation Tabs */
+.tab-navigation {
+  @apply border-b border-gray-200;
+
+  nav {
+    @apply flex space-x-8 px-6;
+  }
+
+  .tab-button {
+    @apply py-4 px-1 border-b-2 font-medium text-sm transition-colors;
+
+    &.active {
+      @apply border-indigo-500 text-indigo-600;
+    }
+
+    &:not(.active) {
+      @apply border-transparent text-gray-500;
+
+      &:hover {
+        @apply text-gray-700 border-gray-300;
+      }
+    }
+
+    .tab-badge {
+      @apply ml-2 bg-gray-100 text-gray-900 py-0.5 px-2.5 rounded-full text-xs;
+    }
+  }
+}
+
+/* Tab Content */
+.tab-content {
+  @apply p-6;
+}
+
+/* Overview Tab */
+.overview-tab {
+  .chart-placeholder {
+    @apply bg-gray-50 rounded-lg p-6;
+
+    h3 {
+      @apply text-lg font-medium text-gray-900 mb-4;
+    }
+
+    .chart-container {
+      @apply h-64 flex items-center justify-center bg-white rounded border-2 border-dashed border-gray-300;
+
+      .chart-message {
+        @apply text-center;
+
+        svg {
+          @apply mx-auto h-12 w-12 text-gray-400;
+        }
+
+        p {
+          @apply mt-2 text-sm text-gray-500;
+        }
+
+        .chart-hint {
+          @apply text-xs text-gray-400;
+        }
+      }
+    }
+  }
+
+  .milestones-section {
+    h3 {
+      @apply text-lg font-medium text-gray-900 mb-4;
+    }
+
+    .milestone-card {
+      @apply border border-gray-200 rounded-lg p-4 transition-shadow;
+
+      &:hover {
+        @apply shadow-md;
+      }
+
+      .milestone-header {
+        @apply flex items-center justify-between mb-2;
+
+        h4 {
+          @apply font-medium text-gray-900;
+        }
+      }
+
+      .milestone-description {
+        @apply text-sm text-gray-600 mb-3;
+      }
+
+      .progress-bar-container {
+        @apply mb-2;
+
+        .progress-label {
+          @apply flex justify-between text-sm;
+
+          .progress-text {
+            @apply text-gray-500;
+          }
+
+          .progress-value {
+            @apply text-gray-900 font-medium;
+          }
+        }
+
+        .progress-bar {
+          @apply mt-1 w-full bg-gray-200 rounded-full h-2;
+
+          .progress-fill {
+            @apply bg-indigo-600 h-2 rounded-full transition-all duration-300;
+          }
+        }
+      }
+
+      .milestone-dates {
+        @apply flex justify-between text-xs text-gray-500;
+      }
+    }
+  }
+}
+
+/* Assignments Tab */
+.assignments-tab {
+  .assignment-card {
+    @apply border border-gray-200 rounded-lg p-4 transition-shadow;
+
+    &:hover {
+      @apply shadow-md;
+    }
+
+    .assignment-header {
+      @apply flex items-center space-x-3 mb-2;
+
+      h4 {
+        @apply font-medium text-gray-900;
+      }
+    }
+
+    .assignment-description {
+      @apply text-sm text-gray-600 mb-3;
+    }
+
+    .assignment-details {
+      @apply grid grid-cols-2 md:grid-cols-4 gap-4 text-sm;
+
+      .detail-item {
+        .detail-label {
+          @apply text-gray-500;
+        }
+
+        .detail-value {
+          @apply font-medium;
+        }
+      }
+    }
+
+    .assignment-feedback {
+      @apply mt-3 p-3 bg-gray-50 rounded-md;
+
+      .feedback-label {
+        @apply text-sm font-medium text-gray-700;
+      }
+
+      .feedback-text {
+        @apply text-sm text-gray-600 mt-1;
+      }
+    }
+  }
+}
+
+/* Assessments Tab */
+.assessments-tab {
+  .assessment-card {
+    @apply border border-gray-200 rounded-lg p-4 transition-shadow;
+
+    &:hover {
+      @apply shadow-md;
+    }
+
+    .assessment-header {
+      @apply flex items-start justify-between mb-3;
+
+      .assessment-info {
+        h4 {
+          @apply font-medium text-gray-900;
+        }
+
+        .assessment-date {
+          @apply text-sm text-gray-500;
+        }
+      }
+
+      .assessment-grade {
+        @apply text-right;
+
+        .grade-display {
+          @apply text-2xl font-bold;
+        }
+
+        .percentage-display {
+          @apply text-sm font-medium;
+        }
+
+        .weight-display {
+          @apply text-xs text-gray-500;
+        }
+      }
+    }
+
+    .topics-section {
+      @apply mb-3;
+
+      .topics-label {
+        @apply text-sm font-medium text-gray-700;
+      }
+
+      .topics-list {
+        @apply flex flex-wrap gap-1 mt-1;
+
+        .topic-tag {
+          @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800;
+        }
+      }
+    }
+
+    .assessment-feedback {
+      @apply p-3 bg-gray-50 rounded-md;
+
+      .feedback-label {
+        @apply text-sm font-medium text-gray-700;
+      }
+
+      .feedback-text {
+        @apply text-sm text-gray-600 mt-1;
+      }
+    }
+  }
+}
+
+/* Attendance Tab */
+.attendance-tab {
+  .attendance-grid {
+    @apply grid grid-cols-1 lg:grid-cols-3 gap-6;
+  }
+
+  .attendance-summary {
+    @apply lg:col-span-1;
+
+    .summary-card {
+      @apply bg-gray-50 rounded-lg p-4;
+
+      h3 {
+        @apply font-medium text-gray-900 mb-4;
+      }
+
+      .summary-item {
+        @apply flex justify-between;
+
+        .summary-label {
+          @apply text-sm text-gray-600;
+        }
+
+        .summary-value {
+          @apply text-sm font-medium;
+
+          &.present {
+            @apply text-green-600;
+          }
+
+          &.late {
+            @apply text-yellow-600;
+          }
+
+          &.absent {
+            @apply text-red-600;
+          }
+
+          &.excused {
+            @apply text-blue-600;
+          }
+        }
+      }
+    }
+  }
+
+  .attendance-records {
+    @apply lg:col-span-2;
+
+    .attendance-record {
+      @apply flex items-center justify-between p-3 border border-gray-200 rounded-md;
+
+      .record-info {
+        @apply flex items-center space-x-3;
+
+        .record-date {
+          @apply text-sm font-medium text-gray-900;
+        }
+      }
+
+      .record-notes {
+        @apply text-sm text-gray-600;
+      }
+    }
+  }
+}
+
+/* Notes Tab */
+.notes-tab {
+  .add-note-section {
+    .add-note-button {
+      @apply inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600;
+
+      &:hover {
+        @apply bg-indigo-700;
+      }
+
+      svg {
+        @apply mr-2 h-4 w-4;
+      }
+    }
+
+    .note-form {
+      @apply border border-gray-200 rounded-lg p-4 bg-gray-50;
+
+      .form-grid {
+        @apply grid grid-cols-1 md:grid-cols-2 gap-4 mb-4;
+      }
+
+      .form-group {
+        label {
+          @apply block text-sm font-medium text-gray-700 mb-1;
+        }
+
+        select, textarea {
+          @apply w-full px-3 py-2 border border-gray-300 rounded-md;
+
+          &:focus {
+            @apply outline-none ring-indigo-500 border-indigo-500;
+          }
+        }
+      }
+
+      .checkbox-group {
+        @apply flex items-center;
+
+        input[type="checkbox"] {
+          @apply h-4 w-4 text-indigo-600 border-gray-300 rounded;
+
+          &:focus {
+            @apply ring-indigo-500;
+          }
+        }
+
+        label {
+          @apply ml-2 block text-sm text-gray-900;
+        }
+      }
+
+      .form-actions {
+        @apply flex items-center justify-end space-x-3;
+
+        .cancel-button {
+          @apply px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white;
+
+          &:hover {
+            @apply bg-gray-50;
+          }
+        }
+
+        .submit-button {
+          @apply px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-indigo-600;
+
+          &:hover {
+            @apply bg-indigo-700;
+          }
+
+          &:disabled {
+            @apply opacity-50 cursor-not-allowed;
+          }
+        }
+      }
+    }
+  }
+
+  .notes-list {
+    .note-card {
+      @apply border border-gray-200 rounded-lg p-4;
+
+      .note-header {
+        @apply flex items-start justify-between mb-2;
+
+        .note-author-info {
+          @apply flex items-center space-x-3;
+
+          .note-icon {
+            @apply w-8 h-8 rounded-full flex items-center justify-center;
+
+            &.achievement {
+              @apply bg-green-100;
+
+              svg {
+                @apply w-4 h-4 text-green-600;
+              }
+            }
+
+            &.concern {
+              @apply bg-red-100;
+
+              svg {
+                @apply w-4 h-4 text-red-600;
+              }
+            }
+
+            &.improvement {
+              @apply bg-yellow-100;
+
+              svg {
+                @apply w-4 h-4 text-yellow-600;
+              }
+            }
+
+            &.general {
+              @apply bg-blue-100;
+
+              svg {
+                @apply w-4 h-4 text-blue-600;
+              }
+            }
+          }
+
+          .author-details {
+            .author-name {
+              @apply font-medium text-gray-900;
+            }
+
+            .note-date {
+              @apply text-sm text-gray-500;
+            }
+          }
+        }
+      }
+
+      .note-content {
+        @apply text-gray-700 ml-11;
+      }
+    }
+  }
+}
+
+/* Badge Styles */
+.status-badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+
+  &.assignment-graded {
+    @apply bg-green-100 text-green-800;
+  }
+
+  &.assignment-submitted {
+    @apply bg-blue-100 text-blue-800;
+  }
+
+  &.assignment-pending {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+
+  &.assignment-late {
+    @apply bg-red-100 text-red-800;
+  }
+
+  &.attendance-present {
+    @apply bg-green-100 text-green-800;
+  }
+
+  &.attendance-late {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+
+  &.attendance-absent {
+    @apply bg-red-100 text-red-800;
+  }
+
+  &.attendance-excused {
+    @apply bg-blue-100 text-blue-800;
+  }
+
+  &.milestone-completed {
+    @apply bg-green-100 text-green-800;
+  }
+
+  &.milestone-in-progress {
+    @apply bg-blue-100 text-blue-800;
+  }
+
+  &.milestone-pending {
+    @apply bg-gray-100 text-gray-800;
+  }
+
+  &.milestone-overdue {
+    @apply bg-red-100 text-red-800;
+  }
+
+  &.note-achievement {
+    @apply bg-green-100 text-green-800;
+  }
+
+  &.note-concern {
+    @apply bg-red-100 text-red-800;
+  }
+
+  &.note-improvement {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+
+  &.note-general {
+    @apply bg-blue-100 text-blue-800;
+  }
+
+  &.private {
+    @apply bg-gray-100 text-gray-800;
+  }
+}
+
+/* Grade Color Classes */
+.grade-excellent {
+  @apply text-green-600;
+}
+
+.grade-good {
+  @apply text-blue-600;
+}
+
+.grade-average {
+  @apply text-yellow-600;
+}
+
+.grade-below-average {
+  @apply text-orange-600;
+}
+
+.grade-poor {
+  @apply text-red-600;
+}
+
+/* Empty State */
+.empty-state {
+  @apply text-center py-12;
+
+  svg {
+    @apply mx-auto h-12 w-12 text-gray-400;
+  }
+
+  h3 {
+    @apply mt-2 text-sm font-medium text-gray-900;
+  }
+
+  p {
+    @apply mt-1 text-sm text-gray-500;
+  }
+}
+
+/* Loading States */
+.loading-skeleton {
+  @apply animate-pulse;
+
+  .skeleton-header {
+    @apply mb-8;
+
+    .skeleton-title {
+      @apply h-8 bg-gray-200 rounded w-1/3 mb-2;
+    }
+
+    .skeleton-subtitle {
+      @apply h-4 bg-gray-200 rounded w-1/2;
+    }
+  }
+
+  .skeleton-stats {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8;
+
+    .skeleton-stat-card {
+      @apply bg-white rounded-lg shadow p-6;
+
+      .skeleton-stat-content {
+        @apply flex items-center;
+
+        .skeleton-icon {
+          @apply w-8 h-8 bg-gray-200 rounded-md;
+        }
+
+        .skeleton-text {
+          @apply ml-4 space-y-2;
+
+          .skeleton-label {
+            @apply h-4 bg-gray-200 rounded w-20;
+          }
+
+          .skeleton-value {
+            @apply h-6 bg-gray-200 rounded w-16;
+          }
+        }
+      }
+    }
+  }
+
+  .skeleton-content {
+    @apply bg-white rounded-lg shadow p-6;
+
+    .skeleton-lines {
+      @apply space-y-4;
+
+      .skeleton-line {
+        @apply h-4 bg-gray-200 rounded;
+
+        &.w-1-4 {
+          @apply w-1/4;
+        }
+
+        &.w-3-4 {
+          @apply w-3/4;
+        }
+
+        &.w-1-2 {
+          @apply w-1/2;
+        }
+      }
+    }
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .progress-container {
+    @apply px-4;
+  }
+
+  .course-header {
+    .grade-display {
+      @apply mt-4;
+    }
+  }
+
+  .assignment-details {
+    @apply grid-cols-1;
+  }
+
+  .attendance-grid {
+    @apply grid-cols-1;
+  }
+
+  .tab-navigation nav {
+    @apply space-x-4;
+  }
+
+  .tab-button {
+    @apply text-xs;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .progress-container {
+    @apply shadow-none;
+  }
+
+  .tab-navigation,
+  .add-note-section {
+    @apply hidden;
+  }
+
+  .main-content {
+    @apply shadow-none border border-gray-300;
+  }
+}

@@ -1,0 +1,177 @@
+<div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Schedule Overview</h1>
+      <p class="mt-2 text-gray-600">Manage class schedules, classrooms, and mentor assignments</p>
+    </div>
+    <div class="flex space-x-3">
+      <a routerLink="/scheduling/calendar"
+         class="bg-white text-gray-700 px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        Calendar View
+      </a>
+      <a routerLink="/scheduling/timetable"
+         class="bg-white text-gray-700 px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        Timetable
+      </a>
+      <a routerLink="/scheduling/new"
+         class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        Add Schedule
+      </a>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+        </div>
+        <div class="ml-5">
+          <p class="text-sm font-medium text-gray-500">Total Schedules</p>
+          <p class="text-2xl font-bold text-gray-900">{{ stats().totalSchedules }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <div class="ml-5">
+          <p class="text-sm font-medium text-gray-500">Active Schedules</p>
+          <p class="text-2xl font-bold text-gray-900">{{ stats().activeSchedules }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <svg class="h-8 w-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+          </svg>
+        </div>
+        <div class="ml-5">
+          <p class="text-sm font-medium text-gray-500">Conflicts</p>
+          <p class="text-2xl font-bold text-gray-900">{{ stats().conflicts }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <svg class="h-8 w-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+          </svg>
+        </div>
+        <div class="ml-5">
+          <p class="text-sm font-medium text-gray-500">Classrooms in Use</p>
+          <p class="text-2xl font-bold text-gray-900">{{ stats().classroomsInUse }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Recent Schedules -->
+    <div class="bg-white rounded-lg shadow">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900">Recent Schedules</h2>
+      </div>
+      <div class="p-6">
+        <div *ngIf="isLoading()" class="flex justify-center py-8">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        </div>
+
+        <div *ngIf="!isLoading() && schedules().length === 0" class="text-center py-8 text-gray-500">
+          No schedules found
+        </div>
+
+        <div *ngIf="!isLoading() && schedules().length > 0" class="space-y-4">
+          <div *ngFor="let schedule of schedules().slice(0, 5)"
+               class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+            <div class="flex-1">
+              <h3 class="text-sm font-medium text-gray-900">{{ schedule.courseName }}</h3>
+              <p class="text-sm text-gray-500">{{ schedule.mentorName }} • {{ schedule.classroomName }}</p>
+              <p class="text-xs text-gray-400">
+                {{ getDayName(schedule.dayOfWeek) }} {{ schedule.startTime }} - {{ schedule.endTime }}
+              </p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                [class]="schedule.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'">
+                {{ schedule.isActive ? 'Active' : 'Inactive' }}
+              </span>
+              <a [routerLink]="['/scheduling/edit', schedule.id]"
+                 class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">
+                Edit
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="schedules().length > 5" class="mt-6 text-center">
+          <a routerLink="/scheduling/calendar"
+             class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">
+            View all schedules →
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conflicts -->
+    <div class="bg-white rounded-lg shadow">
+      <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h2 class="text-lg font-semibold text-gray-900">Schedule Conflicts</h2>
+        <a routerLink="/scheduling/conflicts"
+           class="text-sm text-indigo-600 hover:text-indigo-900 font-medium">
+          View all
+        </a>
+      </div>
+      <div class="p-6">
+        <div *ngIf="conflicts().length === 0" class="text-center py-8">
+          <svg class="w-12 h-12 text-green-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <p class="text-gray-500">No conflicts found</p>
+        </div>
+
+        <div *ngIf="conflicts().length > 0" class="space-y-4">
+          <div *ngFor="let conflict of conflicts().slice(0, 5)"
+               class="p-4 border border-gray-200 rounded-lg">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center space-x-2 mb-2">
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    [class]="getConflictSeverityColor(conflict.severity)">
+                    {{ conflict.severity | titlecase }}
+                  </span>
+                  <span class="text-xs text-gray-500">{{ conflict.type | titlecase }} Conflict</span>
+                </div>
+                <p class="text-sm text-gray-900">{{ conflict.description }}</p>
+                <p class="text-xs text-gray-500 mt-1">
+                  {{ conflict.createdAt | date:'short' }}
+                </p>
+              </div>
+              <button
+                class="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
+                [class.opacity-50]="conflict.isResolved">
+                {{ conflict.isResolved ? 'Resolved' : 'Resolve' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

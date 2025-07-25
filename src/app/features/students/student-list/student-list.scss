@@ -1,0 +1,226 @@
+/* ===== STUDENT LIST COMPONENT STYLES ===== */
+/* src/app/features/students/student-list/student-list.component.scss */
+
+.students-container {
+  @apply p-6;
+}
+
+.header-section {
+  @apply flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6;
+
+  .title-group {
+    h1 {
+      @apply text-2xl font-bold text-gray-900;
+    }
+
+    p {
+      @apply mt-1 text-sm text-gray-500;
+    }
+  }
+
+  .actions {
+    @apply mt-4 sm:mt-0;
+
+    .add-button {
+      @apply inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200;
+
+      svg {
+        @apply mr-2 h-4 w-4;
+      }
+    }
+  }
+}
+
+.search-section {
+  @apply mb-6;
+
+  .search-wrapper {
+    @apply relative;
+
+    input {
+      @apply w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200;
+    }
+
+    .search-icon {
+      @apply absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none;
+
+      svg {
+        @apply h-5 w-5 text-gray-400;
+      }
+    }
+  }
+}
+
+.students-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.student-card {
+  @apply bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden;
+
+  .card-content {
+    @apply p-6;
+  }
+
+  .card-header {
+    @apply flex items-center justify-between mb-4;
+
+    .student-info {
+      @apply flex items-center space-x-3;
+
+      .avatar {
+        @apply w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center;
+
+        span {
+          @apply text-indigo-600 font-semibold text-lg;
+        }
+      }
+
+      .details {
+        h3 {
+          @apply text-lg font-semibold text-gray-900;
+        }
+
+        p {
+          @apply text-sm text-gray-500;
+        }
+      }
+    }
+  }
+
+  .card-body {
+    @apply space-y-2 mb-4;
+
+    .info-item {
+      @apply flex items-center text-sm text-gray-600;
+
+      svg {
+        @apply mr-2 h-4 w-4;
+      }
+    }
+  }
+
+  .card-actions {
+    @apply flex items-center justify-between pt-4 border-t border-gray-200;
+
+    .action-links {
+      @apply flex space-x-2;
+
+      a {
+        @apply text-sm font-medium transition-colors duration-200;
+
+        &.view-link {
+          @apply text-indigo-600 hover:text-indigo-500;
+        }
+
+        &.edit-link {
+          @apply text-green-600 hover:text-green-500;
+        }
+      }
+    }
+
+    .action-buttons {
+      @apply flex space-x-1;
+
+      button {
+        @apply p-1 transition-colors duration-200;
+
+        &.status-btn {
+          @apply text-gray-400 hover:text-gray-600;
+        }
+
+        &.delete-btn {
+          @apply text-red-400 hover:text-red-600;
+        }
+
+        svg {
+          @apply h-4 w-4;
+        }
+      }
+    }
+  }
+}
+
+.status-badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+
+  &.active {
+    @apply bg-green-100 text-green-800;
+  }
+
+  &.inactive {
+    @apply bg-red-100 text-red-800;
+  }
+}
+
+.empty-state {
+  @apply text-center py-12;
+
+  svg {
+    @apply mx-auto h-12 w-12 text-gray-400 mb-4;
+  }
+
+  h3 {
+    @apply text-sm font-medium text-gray-900 mb-2;
+  }
+
+  p {
+    @apply text-sm text-gray-500 mb-6;
+  }
+
+  .empty-action {
+    @apply inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700;
+
+    svg {
+      @apply mr-2 h-4 w-4;
+    }
+  }
+}
+
+.loading-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+
+  .loading-card {
+    @apply bg-white rounded-lg shadow-md p-6;
+
+    .loading-content {
+      @apply animate-pulse;
+
+      .loading-header {
+        @apply flex items-center space-x-3 mb-4;
+
+        .loading-avatar {
+          @apply w-12 h-12 bg-gray-200 rounded-full;
+        }
+
+        .loading-info {
+          @apply space-y-2;
+
+          .loading-name {
+            @apply h-4 bg-gray-200 rounded w-24;
+          }
+
+          .loading-age {
+            @apply h-3 bg-gray-200 rounded w-16;
+          }
+        }
+      }
+
+      .loading-body {
+        @apply space-y-2;
+
+        .loading-line {
+          @apply h-3 bg-gray-200 rounded;
+
+          &.full {
+            @apply w-full;
+          }
+
+          &.three-quarters {
+            @apply w-3/4;
+          }
+        }
+      }
+    }
+  }
+}

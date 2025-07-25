@@ -1,0 +1,49 @@
+.loading-overlay {
+  @apply fixed inset-0 z-50 flex items-center justify-center;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+.loading-container {
+  @apply bg-white rounded-lg p-8 flex flex-col items-center space-y-4 shadow-xl;
+  min-width: 200px;
+}
+
+.loading-spinner {
+  @apply relative;
+  width: 60px;
+  height: 60px;
+}
+
+.spinner-ring {
+  @apply absolute border-4 border-solid rounded-full;
+  width: 60px;
+  height: 60px;
+  border-color: transparent transparent #4f46e5 transparent;
+  animation: spin 1.2s linear infinite;
+
+  &:nth-child(1) {
+    animation-delay: -0.45s;
+  }
+
+  &:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+
+  &:nth-child(3) {
+    animation-delay: -0.15s;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  @apply text-gray-700 font-medium;
+}

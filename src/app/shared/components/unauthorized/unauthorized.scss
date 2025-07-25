@@ -1,0 +1,43 @@
+.error-container {
+  @apply min-h-screen flex items-center justify-center bg-gray-50;
+}
+
+.error-content {
+  @apply max-w-md w-full text-center space-y-6;
+}
+
+.error-icon {
+  @apply mx-auto h-24 w-24 flex items-center justify-center rounded-full;
+
+  &.unauthorized {
+    @apply bg-red-100;
+
+    svg {
+      @apply h-12 w-12 text-red-600;
+    }
+  }
+}
+
+.error-title {
+  @apply text-4xl font-bold text-gray-900;
+}
+
+.error-subtitle {
+  @apply text-2xl font-semibold text-gray-700;
+}
+
+.error-description {
+  @apply text-gray-600;
+}
+
+.error-actions {
+  @apply space-y-4;
+}
+
+.primary-button {
+  @apply inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500;
+}
+
+.secondary-button {
+  @apply text-indigo-600 hover:text-indigo-500 font-medium;
+}

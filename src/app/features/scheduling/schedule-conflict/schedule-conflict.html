@@ -1,0 +1,146 @@
+<div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Schedule Conflicts</h1>
+      <p class="mt-2 text-gray-600">Identify and resolve scheduling conflicts</p>
+    </div>
+    <div class="flex space-x-3">
+      <select
+        [value]="selectedSeverity()"
+        (change)="onSeverityChange($any($event.target).value)"
+        class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <option *ngFor="let option of severityOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+      <a routerLink="/scheduling/overview"
+         class="bg-white text-gray-700 px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-50">
+        Back to Overview
+      </a>
+    </div>
+  </div>
+
+  <!-- Conflicts List -->
+  <div class="bg-white rounded-lg shadow">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-900">
+        Conflicts ({{ getFilteredConflicts().length }})
+      </h2>
+    </div>
+
+    <div *ngIf="isLoading()" class="flex justify-center py-12">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+    </div>
+
+    <div *ngIf="!isLoading() && getFilteredConflicts().length === 0" class="text-center py-12">
+      <svg class="w-12 h-12 text-green-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <p class="text-gray-500">No conflicts found</p>
+      <p class="text-sm text-gray-400 mt-1">All schedules are properly coordinated</p>
+    </div>
+
+    <div *ngIf="!isLoading() && getFilteredConflicts().length > 0" class="divide-y divide-gray-200">
+      <div *ngFor="let conflict of getFilteredConflicts()"
+           class="p-6 hover:bg-gray-50"
+           [class.opacity-50]="conflict.isResolved">
+
+        <div class="flex items-start justify-between">
+          <div class="flex items-start space-x-4">
+            <!-- Conflict Type Icon -->
+            <div class="flex-shrink-0">
+              <div
+                class="w-10 h-10 rounded-full flex items-center justify-center"
+                [class]="getConflictSeverityColor(conflict.severity)">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path [attr.d]="getConflictTypeIcon(conflict.type)"></path>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Conflict Details -->
+            <div class="flex-1">
+              <div class="flex items-center space-x-3 mb-2">
+                <h3 class="text-lg font-medium text-gray-900">
+                  {{ conflict.type | titlecase }} Conflict
+                </h3>
+                <span
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border"
+                  [class]="getConflictSeverityColor(conflict.severity)">
+                  {{ conflict.severity | titlecase }} Priority
+                </span>
+                <span *ngIf="conflict.isResolved"
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  Resolved
+                </span>
+              </div>
+
+              <p class="text-gray-700 mb-3">{{ conflict.description }}</p>
+
+              <div class="text-sm text-gray-500">
+                <p>Detected on {{ conflict.createdAt | date:'medium' }}</p>
+              </div>
+
+              <!-- Conflicting Schedules -->
+              <div *ngIf="conflict.conflictingSchedules.length > 0" class="mt-4">
+                <h4 class="text-sm font-medium text-gray-900 mb-2">Affected Schedules:</h4>
+                <div class="space-y-2">
+                  <div *ngFor="let schedule of conflict.conflictingSchedules"
+                       class="bg-gray-50 p-3 rounded-lg text-sm">
+                    <div class="font-medium text-gray-900">{{ schedule.courseName }}</div>
+                    <div class="text-gray-600">
+                      {{ schedule.mentorName }} • {{ schedule.classroomName }}
+                    </div>
+                    <div class="text-gray-500">
+                      {{ schedule.startTime }} - {{ schedule.endTime }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex-shrink-0 ml-4">
+            <div class="flex space-x-2">
+              <button
+                *ngIf="!conflict.isResolved"
+                (click)="resolveConflict(conflict.id)"
+                class="bg-indigo-600 text-white px-3 py-1 text-sm rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                Mark Resolved
+              </button>
+              <a routerLink="/scheduling/calendar"
+                 class="bg-gray-100 text-gray-700 px-3 py-1 text-sm rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                View Calendar
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conflict Resolution Tips -->
+  <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+    <h3 class="text-lg font-semibold text-blue-900 mb-4">Conflict Resolution Tips</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
+      <div>
+        <h4 class="font-medium mb-2">Mentor Conflicts:</h4>
+        <ul class="space-y-1 list-disc list-inside">
+          <li>Check mentor availability hours</li>
+          <li>Consider splitting large classes</li>
+          <li>Assign backup mentors</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-medium mb-2">Classroom Conflicts:</h4>
+        <ul class="space-y-1 list-disc list-inside">
+          <li>Reserve alternative classrooms</li>
+          <li>Adjust class timings</li>
+          <li>Check room capacity requirements</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+.conflict-list {
+  @apply bg-white rounded-lg shadow divide-y divide-gray-200;
+}
+
+.conflict-item {
+  @apply p-6 hover:bg-gray-50 transition-colors duration-200;
+
+  &.resolved {
+    @apply opacity-50;
+  }
+}
+
+.conflict-icon {
+  @apply w-10 h-10 rounded-full flex items-center justify-center;
+
+  &.high {
+    @apply text-red-600 bg-red-100 border-red-200;
+  }
+
+  &.medium {
+    @apply text-yellow-600 bg-yellow-100 border-yellow-200;
+  }
+
+  &.low {
+    @apply text-blue-600 bg-blue-100 border-blue-200;
+  }
+}
+
+.conflict-schedule {
+  @apply bg-gray-50 p-3 rounded-lg text-sm space-y-1;
+}
+
+.resolution-tips {
+  @apply bg-blue-50 border border-blue-200 rounded-lg p-6;
+}

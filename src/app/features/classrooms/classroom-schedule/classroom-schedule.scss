@@ -1,0 +1,19 @@
+.schedule-grid {
+  @apply grid grid-cols-7 gap-4;
+}
+
+.schedule-day {
+  @apply min-h-32 bg-gray-50 rounded-md p-2;
+}
+
+.schedule-slot {
+  @apply mb-2 p-2 bg-white rounded border-l-4 border-indigo-500 shadow-sm transition-all duration-200;
+
+  &:hover {
+    @apply shadow-md transform scale-105;
+  }
+}
+
+.empty-slot {
+  @apply text-center text-xs text-gray-400 py-4;
+}

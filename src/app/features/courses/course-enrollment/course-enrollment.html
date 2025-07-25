@@ -1,0 +1,292 @@
+<!-- ===== COURSE ENROLLMENT TEMPLATE ===== -->
+<!-- src/app/features/courses/course-enrollment/course-enrollment.component.html -->
+
+<div *ngIf="loading()" class="flex items-center justify-center min-h-screen">
+  <div class="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+</div>
+
+<div *ngIf="!loading() && course()" class="mx-auto p-6">
+  <!-- Breadcrumb -->
+  <nav class="flex mb-6" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+      <li class="inline-flex items-center">
+        <a routerLink="/courses" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
+          Courses
+        </a>
+      </li>
+      <li>
+        <div class="flex items-center">
+          <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+          </svg>
+          <a [routerLink]="['/courses', course()?.id]" class="ml-1 text-sm font-medium text-gray-700 hover:text-indigo-600 md:ml-2">
+            {{ course()?.name }}
+          </a>
+        </div>
+      </li>
+      <li>
+        <div class="flex items-center">
+          <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+          </svg>
+          <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Enrollment</span>
+        </div>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Manage Enrollment</h1>
+        <p class="mt-1 text-sm text-gray-600">{{ course()?.name }}</p>
+      </div>
+      <a
+        [routerLink]="['/courses', course()?.id]"
+        class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+        <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Back to Course
+      </a>
+    </div>
+  </div>
+
+  <!-- Enrollment Overview -->
+  <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Enrollment Overview</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div class="text-center p-4 bg-blue-50 rounded-lg">
+        <div class="text-2xl font-bold text-blue-600">{{ course()?.currentStudents }}</div>
+        <div class="text-sm text-blue-800">Currently Enrolled</div>
+      </div>
+      <div class="text-center p-4 bg-green-50 rounded-lg">
+        <div class="text-2xl font-bold text-green-600">{{ course()?.maxStudents }}</div>
+        <div class="text-sm text-green-800">Maximum Capacity</div>
+      </div>
+      <div class="text-center p-4 bg-yellow-50 rounded-lg">
+        <div class="text-2xl font-bold text-yellow-600">{{ (course()?.maxStudents ?? 0) - (course()?.currentStudents ?? 0) }}</div>
+        <div class="text-sm text-yellow-800">Available Spots</div>
+      </div>
+      <div class="text-center p-4 bg-purple-50 rounded-lg">
+        <div class="text-2xl font-bold text-purple-600">{{ getEnrollmentRate() }}%</div>
+        <div class="text-sm text-purple-800">Enrollment Rate</div>
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="mb-4">
+      <div class="flex items-center justify-between text-sm text-gray-600 mb-2">
+        <span>Enrollment Progress</span>
+        <span>{{ course()?.currentStudents }} / {{ course()?.maxStudents }} students</span>
+      </div>
+      <div class="w-full bg-gray-200 rounded-full h-3">
+        <div
+          class="h-3 rounded-full transition-all duration-300"
+          [class]="getEnrollmentRate() >= 90 ? 'bg-red-500' : getEnrollmentRate() >= 70 ? 'bg-yellow-500' : 'bg-green-500'"
+          [style.width.%]="getEnrollmentRate()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Capacity Warning -->
+    <div *ngIf="getEnrollmentRate() >= 90" class="p-4 bg-red-50 border border-red-200 rounded-lg">
+      <div class="flex items-center">
+        <svg class="w-5 h-5 text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+        <span class="text-sm text-red-800">
+          <strong>Course Near Capacity:</strong> This course is {{ getEnrollmentRate() }}% full. Only {{ (course()?.maxStudents ?? 0) - (course()?.currentStudents ?? 0) }} spots remaining.
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+    <!-- Currently Enrolled Students -->
+    <div class="bg-white rounded-lg shadow-md">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">
+          Currently Enrolled Students ({{ enrolledStudents().length }})
+        </h3>
+      </div>
+
+      <div class="p-6">
+        <div *ngIf="enrolledStudents().length === 0" class="text-center py-8">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">No students enrolled</h3>
+          <p class="mt-1 text-sm text-gray-500">Start by enrolling students from the available list.</p>
+        </div>
+
+        <div *ngIf="enrolledStudents().length > 0" class="space-y-3">
+          <div
+            *ngFor="let student of enrolledStudents()"
+            class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
+                <span class="text-indigo-600 font-medium text-sm">
+                  {{ student.firstName.charAt(0) }}{{ student.lastName.charAt(0) }}
+                </span>
+              </div>
+              <div>
+                <div class="font-medium text-gray-900">{{ student.firstName }} {{ student.lastName }}</div>
+                <div class="text-sm text-gray-500">
+                  {{ student.academicLevel }} • Age {{ getAge(student.dateOfBirth) }}
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center space-x-2">
+              <a
+                [routerLink]="['/students', student.id]"
+                class="text-indigo-600 hover:text-indigo-500 text-sm font-medium">
+                View
+              </a>
+              <button
+                *ngIf="isAdmin()"
+                (click)="unenrollStudent(student)"
+                class="text-red-600 hover:text-red-500 text-sm font-medium">
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Available Students -->
+    <div class="bg-white rounded-lg shadow-md">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-gray-900">
+            Available Students ({{ filteredAvailableStudents().length }})
+          </h3>
+        </div>
+
+        <!-- Search -->
+        <div class="mt-4">
+          <div class="relative">
+            <input
+              [formControl]="searchControl"
+              type="text"
+              placeholder="Search available students..."
+              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-6">
+        <div *ngIf="filteredAvailableStudents().length === 0" class="text-center py-8">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">No available students</h3>
+          <p class="mt-1 text-sm text-gray-500">
+            {{ availableStudents().length === 0 ? 'All students are already enrolled in this course.' : 'No students match your search criteria.' }}
+          </p>
+        </div>
+
+        <div *ngIf="filteredAvailableStudents().length > 0" class="space-y-3">
+          <div
+            *ngFor="let student of filteredAvailableStudents()"
+            class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                <span class="text-gray-600 font-medium text-sm">
+                  {{ student.firstName.charAt(0) }}{{ student.lastName.charAt(0) }}
+                </span>
+              </div>
+              <div>
+                <div class="font-medium text-gray-900">{{ student.firstName }} {{ student.lastName }}</div>
+                <div class="text-sm text-gray-500">
+                  {{ student.academicLevel }} • Age {{ getAge(student.dateOfBirth) }}
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center space-x-2">
+              <a
+                [routerLink]="['/students', student.id]"
+                class="text-gray-600 hover:text-gray-500 text-sm font-medium">
+                View
+              </a>
+              <button
+                *ngIf="isAdmin() && course() && course()!.currentStudents < course()!.maxStudents"
+                (click)="enrollStudent(student)"
+                class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                <svg class="mr-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Enroll
+              </button>
+              <span
+                *ngIf="course() && course()!.currentStudents >= course()!.maxStudents"
+                class="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-500">
+                Course Full
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enrollment Actions -->
+  <div class="mt-8 bg-white rounded-lg shadow-md p-6" *ngIf="isAdmin()">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <button class="flex items-center justify-center p-4 border border-gray-300 rounded-lg hover:bg-gray-50">
+        <svg class="w-5 h-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        <span class="text-sm font-medium text-gray-900">Export Enrollment List</span>
+      </button>
+
+      <button class="flex items-center justify-center p-4 border border-gray-300 rounded-lg hover:bg-gray-50">
+        <svg class="w-5 h-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+        </svg>
+        <span class="text-sm font-medium text-gray-900">Send Notifications</span>
+      </button>
+
+      <button class="flex items-center justify-center p-4 border border-gray-300 rounded-lg hover:bg-gray-50">
+        <svg class="w-5 h-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+        <span class="text-sm font-medium text-gray-900">Generate Report</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Error State -->
+<div *ngIf="!loading() && !course()" class="flex items-center justify-center min-h-screen">
+  <div class="text-center">
+    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+    </svg>
+    <h3 class="mt-2 text-sm font-medium text-gray-900">Course not found</h3>
+    <p class="mt-1 text-sm text-gray-500">The course you're looking for doesn't exist or has been removed.</p>
+    <div class="mt-6">
+      <a
+        routerLink="/courses"
+        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+        Back to Courses
+      </a>
+    </div>
+  </div>
+</div>

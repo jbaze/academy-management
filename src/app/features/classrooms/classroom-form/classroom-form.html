@@ -1,0 +1,232 @@
+<!-- src/app/features/classrooms/classroom-form/classroom-form.component.html -->
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">
+      {{ isEditing() ? 'Edit Classroom' : 'Add New Classroom' }}
+    </h1>
+    <p class="mt-2 text-gray-600">
+      {{ isEditing() ? 'Update classroom information and facilities' : 'Create a new classroom with equipment and details' }}
+    </p>
+  </div>
+
+  <!-- Form -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+    <form [formGroup]="classroomForm" (ngSubmit)="onSubmit()" class="p-6 space-y-6">
+
+      <!-- Basic Information -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Classroom Name -->
+        <div>
+          <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+            Classroom Name <span class="text-red-500">*</span>
+          </label>
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            placeholder="e.g., Room A, Science Lab 1"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            [class.border-red-500]="name?.invalid && name?.touched">
+          <div *ngIf="name?.invalid && name?.touched" class="text-red-500 text-xs mt-1">
+            <span *ngIf="name?.errors?.['required']">Classroom name is required</span>
+            <span *ngIf="name?.errors?.['maxlength']">Name cannot exceed 100 characters</span>
+          </div>
+        </div>
+
+        <!-- Capacity -->
+        <div>
+          <label for="capacity" class="block text-sm font-medium text-gray-700 mb-2">
+            Capacity <span class="text-red-500">*</span>
+          </label>
+          <input
+            id="capacity"
+            type="number"
+            formControlName="capacity"
+            min="1"
+            max="100"
+            placeholder="e.g., 30"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            [class.border-red-500]="capacity?.invalid && capacity?.touched">
+          <div *ngIf="capacity?.invalid && capacity?.touched" class="text-red-500 text-xs mt-1">
+            <span *ngIf="capacity?.errors?.['required']">Capacity is required</span>
+            <span *ngIf="capacity?.errors?.['min']">Capacity must be at least 1</span>
+            <span *ngIf="capacity?.errors?.['max']">Capacity cannot exceed 100</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div>
+        <label for="location" class="block text-sm font-medium text-gray-700 mb-2">
+          Location <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="location"
+          type="text"
+          formControlName="location"
+          placeholder="e.g., First Floor, Building A"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          [class.border-red-500]="location?.invalid && location?.touched">
+        <div *ngIf="location?.invalid && location?.touched" class="text-red-500 text-xs mt-1">
+          <span *ngIf="location?.errors?.['required']">Location is required</span>
+          <span *ngIf="location?.errors?.['maxlength']">Location cannot exceed 200 characters</span>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+          Description
+        </label>
+        <textarea
+          id="description"
+          formControlName="description"
+          rows="3"
+          placeholder="Optional description of the classroom..."
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          [class.border-red-500]="description?.invalid && description?.touched">
+        </textarea>
+        <div *ngIf="description?.invalid && description?.touched" class="text-red-500 text-xs mt-1">
+          <span *ngIf="description?.errors?.['maxlength']">Description cannot exceed 500 characters</span>
+        </div>
+        <p class="mt-1 text-xs text-gray-500">{{ classroomForm.get('description')?.value?.length || 0 }}/500 characters</p>
+      </div>
+
+      <!-- Equipment -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <label class="block text-sm font-medium text-gray-700">
+            Equipment <span class="text-red-500">*</span>
+          </label>
+          <button
+            type="button"
+            (click)="addEquipment()"
+            class="inline-flex items-center px-3 py-1 text-sm text-indigo-600 hover:text-indigo-800 font-medium hover:bg-indigo-50 rounded-md transition-colors duration-200">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Add Equipment
+          </button>
+        </div>
+
+        <div class="space-y-3">
+          <div
+            *ngFor="let equipment of equipmentArray.controls; let i = index"
+            class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+            <div class="flex-1">
+              <select
+                [formControlName]="i"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                [class.border-red-500]="equipment.invalid && equipment.touched">
+                <option value="">Select equipment...</option>
+                <option *ngFor="let option of equipmentOptions" [value]="option">
+                  {{ option }}
+                </option>
+              </select>
+              <div *ngIf="equipment.invalid && equipment.touched" class="text-red-500 text-xs mt-1">
+                Equipment is required
+              </div>
+            </div>
+            <button
+              type="button"
+              (click)="removeEquipment(i)"
+              [disabled]="equipmentArray.length === 1"
+              class="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Remove equipment">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Equipment Summary -->
+          <div *ngIf="equipmentArray.length > 0" class="text-xs text-gray-500 mt-2">
+            {{ equipmentArray.length }} equipment item(s) added
+          </div>
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <label class="flex items-start">
+          <input
+            type="checkbox"
+            formControlName="isActive"
+            class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded mt-0.5">
+          <div class="ml-3">
+            <span class="text-sm font-medium text-gray-700">Active classroom</span>
+            <p class="text-xs text-gray-500 mt-1">
+              Inactive classrooms cannot be scheduled for classes and will not appear in booking systems
+            </p>
+          </div>
+        </label>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+        <!-- Cancel Button -->
+        <button
+          type="button"
+          (click)="onCancel()"
+          class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200">
+          Cancel
+        </button>
+
+        <!-- Submit Button -->
+        <div class="flex items-center space-x-3">
+          <!-- Form Status -->
+          <div *ngIf="classroomForm.invalid && classroomForm.touched" class="text-sm text-red-600">
+            Please fill in all required fields
+          </div>
+
+          <button
+            type="submit"
+            [disabled]="classroomForm.invalid || isLoading()"
+            class="px-6 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200">
+            <span *ngIf="isLoading()" class="flex items-center">
+              <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              {{ isEditing() ? 'Updating...' : 'Creating...' }}
+            </span>
+            <span *ngIf="!isLoading()">
+              {{ isEditing() ? 'Update Classroom' : 'Create Classroom' }}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Form Debug Info (only in development) -->
+      <div class="mt-4 p-3 bg-gray-100 rounded text-xs text-gray-600" style="display: none;">
+        <strong>Form Status:</strong> {{ classroomForm.status }}<br>
+        <strong>Form Valid:</strong> {{ classroomForm.valid }}<br>
+        <strong>Form Touched:</strong> {{ classroomForm.touched }}<br>
+        <strong>Equipment Count:</strong> {{ equipmentArray.length }}
+      </div>
+    </form>
+  </div>
+
+  <!-- Help Text -->
+  <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <div class="ml-3">
+        <h3 class="text-sm font-medium text-blue-800">Tips for creating classrooms</h3>
+        <div class="mt-2 text-sm text-blue-700">
+          <ul class="list-disc pl-5 space-y-1">
+            <li>Use clear, descriptive names like "Science Lab 1" or "Art Studio"</li>
+            <li>Set realistic capacity based on physical space and safety requirements</li>
+            <li>Include all available equipment to help with course planning</li>
+            <li>Provide detailed location information for easy navigation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

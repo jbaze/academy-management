@@ -1,0 +1,19 @@
+.stats-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6;
+}
+
+.stat-card {
+  @apply bg-white rounded-lg shadow p-6 transition-transform duration-200 hover:scale-105;
+}
+
+.schedule-item {
+  @apply p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200 cursor-pointer;
+}
+
+.conflict-item {
+  @apply p-4 border rounded-lg transition-all duration-200;
+
+  &.resolved {
+    @apply opacity-50;
+  }
+}

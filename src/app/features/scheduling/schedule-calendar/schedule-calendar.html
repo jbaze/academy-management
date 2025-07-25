@@ -1,0 +1,157 @@
+<div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Schedule Calendar</h1>
+      <p class="mt-2 text-gray-600">View and manage class schedules in calendar format</p>
+    </div>
+    <div class="flex space-x-3">
+      <a routerLink="/scheduling/overview"
+         class="bg-white text-gray-700 px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-50">
+        Overview
+      </a>
+      <a routerLink="/scheduling/new"
+         class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+        Add Schedule
+      </a>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <!-- Calendar -->
+    <div class="lg:col-span-3">
+      <div class="bg-white rounded-lg shadow">
+        <!-- Calendar Header -->
+        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+          <h2 class="text-lg font-semibold text-gray-900">{{ getCurrentMonthYear() }}</h2>
+          <div class="flex space-x-2">
+            <button
+              (click)="previousMonth()"
+              class="p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+              </svg>
+            </button>
+            <button
+              (click)="nextMonth()"
+              class="p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Calendar Grid -->
+        <div class="p-6">
+          <!-- Day Headers -->
+          <div class="grid grid-cols-7 gap-1 mb-2">
+            <div *ngFor="let day of dayNames"
+                 class="text-center text-sm font-medium text-gray-500 py-2">
+              {{ day }}
+            </div>
+          </div>
+
+          <!-- Calendar Days -->
+          <div class="grid grid-cols-7 gap-1">
+            <div *ngFor="let week of calendarWeeks()">
+              <div *ngFor="let day of week.days"
+                   class="min-h-[120px] border border-gray-200 p-2 cursor-pointer hover:bg-gray-50 transition-colors"
+                   [class.bg-blue-50]="day.isToday"
+                   [class.text-gray-400]="!day.isCurrentMonth"
+                   [class.bg-indigo-50]="selectedDate() && selectedDate()?.toDateString() === day.date.toDateString()"
+                   (click)="selectDate(day)">
+
+                <!-- Date Number -->
+                <div class="flex justify-between items-start mb-1">
+                  <span
+                    class="text-sm font-medium"
+                    [class.text-indigo-600]="day.isToday">
+                    {{ day.date.getDate() }}
+                  </span>
+                  <span *ngIf="day.schedules.length > 0"
+                        class="text-xs bg-indigo-100 text-indigo-800 px-1 rounded">
+                    {{ day.schedules.length }}
+                  </span>
+                </div>
+
+                <!-- Schedule Items -->
+                <div class="space-y-1">
+                  <div *ngFor="let schedule of day.schedules.slice(0, 3)"
+                       class="text-xs p-1 rounded text-white truncate"
+                       [class]="getScheduleColor(schedule)"
+                       [title]="schedule.courseName + ' - ' + schedule.startTime + ' to ' + schedule.endTime">
+                    {{ schedule.courseName }}
+                  </div>
+                  <div *ngIf="day.schedules.length > 3"
+                       class="text-xs text-gray-500">
+                    +{{ day.schedules.length - 3 }} more
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schedule Details Sidebar -->
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-lg shadow">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">
+            {{ selectedDate() ? (selectedDate() | date:'mediumDate') : 'Select a Date' }}
+          </h3>
+        </div>
+
+        <div class="p-6">
+          <div *ngIf="!selectedDate()" class="text-center text-gray-500 py-8">
+            <svg class="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <p>Click on a date to view schedules</p>
+          </div>
+
+          <div *ngIf="selectedDate() && selectedSchedules().length === 0" class="text-center text-gray-500 py-8">
+            <svg class="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <p>No schedules for this date</p>
+          </div>
+
+          <div *ngIf="selectedSchedules().length > 0" class="space-y-4">
+            <div *ngFor="let schedule of selectedSchedules()"
+                 class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+              <div class="flex items-start justify-between mb-2">
+                <h4 class="font-medium text-gray-900">{{ schedule.courseName }}</h4>
+                <span
+                  class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                  [class]="getScheduleColor(schedule) + ' text-white'">
+                  {{ schedule.startTime }} - {{ schedule.endTime }}
+                </span>
+              </div>
+
+              <div class="space-y-1 text-sm text-gray-600">
+                <p><span class="font-medium">Mentor:</span> {{ schedule.mentorName }}</p>
+                <p><span class="font-medium">Classroom:</span> {{ schedule.classroomName }}</p>
+                <p><span class="font-medium">Duration:</span>
+                  {{ schedule.startTime }} - {{ schedule.endTime }}
+                </p>
+              </div>
+
+              <div class="mt-3 flex space-x-2">
+                <a [routerLink]="['/scheduling/edit', schedule.id]"
+                   class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">
+                  Edit
+                </a>
+                <button class="text-red-600 hover:text-red-900 text-sm font-medium">
+                  Cancel Class
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

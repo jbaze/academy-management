@@ -1,0 +1,180 @@
+<div class="bg-white rounded-lg shadow-md p-6 h-full">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <h3 class="text-lg font-semibold text-gray-900">{{ title }}</h3>
+    <div class="flex items-center space-x-2">
+      <!-- Chart Type Indicator -->
+      <div class="flex items-center space-x-1">
+        <svg *ngIf="type === 'bar'" class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+        </svg>
+        <svg *ngIf="type === 'pie'" class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10 2L10 10L18 10C18 5.58 14.42 2 10 2Z"></path>
+          <path d="M10 10L2 10C2 14.42 5.58 18 10 18C14.42 18 18 14.42 18 10L10 10Z"></path>
+        </svg>
+        <svg *ngIf="type === 'line'" class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4"></path>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex items-center justify-center h-64">
+    <div class="flex flex-col items-center space-y-3">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      <p class="text-sm text-gray-500">Loading chart data...</p>
+    </div>
+  </div>
+
+  <!-- Chart Content -->
+  <div *ngIf="!loading" class="chart-container">
+
+    <div class="chart-controls">
+        <button class="chart-type-btn active" (click)="switchChart('bar')">Bar Chart</button>
+        <button class="chart-type-btn" (click)="switchChart('pie')">Pie Chart</button>
+    </div>
+    <div id="chart-content">
+      <!-- Bar Chart -->
+      <div id="bar-chart" class="bar-chart">
+          <div class="chart-area">
+              <div class="y-axis-labels">
+                  <span>245</span>
+                  <span>184</span>
+                  <span>123</span>
+                  <span>61</span>
+                  <span>0</span>
+              </div>
+
+              <div class="bar-item">
+                  <div class="bar-container">
+                      <div class="bar" style="height: 100%; background-color: #3B82F6;">
+                          <span class="bar-value">245</span>
+                      </div>
+                  </div>
+                  <div class="bar-label">
+                      <div class="bar-label-text">Mathematics</div>
+                      <div class="bar-label-value">245</div>
+                  </div>
+              </div>
+
+              <div class="bar-item">
+                  <div class="bar-container">
+                      <div class="bar" style="height: 51.02%; background-color: #8B5CF6;">
+                          <span class="bar-value">125</span>
+                      </div>
+                  </div>
+                  <div class="bar-label">
+                      <div class="bar-label-text">Chemistry</div>
+                      <div class="bar-label-value">125</div>
+                  </div>
+              </div>
+
+              <div class="bar-item">
+                  <div class="bar-container">
+                      <div class="bar" style="height: 30.61%; background-color: #F59E0B;">
+                          <span class="bar-value">75</span>
+                      </div>
+                  </div>
+                  <div class="bar-label">
+                      <div class="bar-label-text">Biology</div>
+                      <div class="bar-label-value">75</div>
+                  </div>
+              </div>
+
+              <div class="bar-item">
+                  <div class="bar-container">
+                      <div class="bar" style="height: 12.24%; background-color: #10B981;">
+                          <span class="bar-value">30</span>
+                      </div>
+                  </div>
+                  <div class="bar-label">
+                      <div class="bar-label-text">Physics</div>
+                      <div class="bar-label-value">30</div>
+                  </div>
+              </div>
+
+              <div class="bar-item">
+                  <div class="bar-container">
+                      <div class="bar" style="height: 8.16%; background-color: #EF4444;">
+                          <span class="bar-value">20</span>
+                      </div>
+                  </div>
+                  <div class="bar-label">
+                      <div class="bar-label-text">Computer Science</div>
+                      <div class="bar-label-value">20</div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+        <!-- Pie Chart -->
+        <div id="pie-chart" class="pie-chart" style="display: none;">
+            <div class="pie-container">
+                <svg class="pie-svg" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#3B82F6" stroke-width="10"
+                            stroke-dasharray="61.22 251.33" stroke-dashoffset="0" class="pie-segment"></circle>
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#8B5CF6" stroke-width="10"
+                            stroke-dasharray="31.42 251.33" stroke-dashoffset="-61.22" class="pie-segment"></circle>
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#F59E0B" stroke-width="10"
+                            stroke-dasharray="18.85 251.33" stroke-dashoffset="-92.64" class="pie-segment"></circle>
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#10B981" stroke-width="10"
+                            stroke-dasharray="7.54 251.33" stroke-dashoffset="-111.49" class="pie-segment"></circle>
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#EF4444" stroke-width="10"
+                            stroke-dasharray="5.03 251.33" stroke-dashoffset="-119.03" class="pie-segment"></circle>
+                </svg>
+
+                <div class="pie-center">
+                    <div>
+                        <div class="pie-center-total">495</div>
+                        <div class="pie-center-label">Total</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pie-legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #3B82F6;"></div>
+                    <span class="legend-label">Mathematics</span>
+                    <span class="legend-value">245</span>
+                    <span class="legend-percentage">(49%)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #8B5CF6;"></div>
+                    <span class="legend-label">Chemistry</span>
+                    <span class="legend-value">125</span>
+                    <span class="legend-percentage">(25%)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #F59E0B;"></div>
+                    <span class="legend-label">Biology</span>
+                    <span class="legend-value">75</span>
+                    <span class="legend-percentage">(15%)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #10B981;"></div>
+                    <span class="legend-label">Physics</span>
+                    <span class="legend-value">30</span>
+                    <span class="legend-percentage">(6%)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #EF4444;"></div>
+                    <span class="legend-label">Computer Science</span>
+                    <span class="legend-value">20</span>
+                    <span class="legend-percentage">(4%)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && chartData().length === 0" class="flex items-center justify-center h-64">
+    <div class="text-center">
+      <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+      </svg>
+      <p class="text-gray-500 text-sm">No data available</p>
+    </div>
+  </div>
+</div>

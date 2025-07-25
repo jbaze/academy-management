@@ -1,0 +1,20 @@
+.timetable {
+  @apply bg-white rounded-lg shadow overflow-hidden;
+}
+
+.time-slot-cell {
+  @apply px-6 py-4 min-h-[80px] border-r border-gray-100 relative;
+}
+
+.schedule-block {
+  @apply p-2 rounded text-white text-xs mb-2 shadow-sm;
+
+  .course-name {
+    @apply font-medium;
+  }
+
+  .mentor-name,
+  .classroom-name {
+    @apply text-xs opacity-90;
+  }
+}

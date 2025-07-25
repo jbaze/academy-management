@@ -1,0 +1,39 @@
+.sidebar {
+  @apply fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0;
+}
+
+.sidebar-header {
+  @apply flex items-center justify-between h-16 px-4 border-b border-gray-200;
+}
+
+.sidebar-logo {
+  @apply w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center;
+}
+
+.user-info {
+  @apply p-4 border-b border-gray-200 bg-gray-50;
+}
+
+.nav-item {
+  @apply flex items-center px-3 py-2 text-sm font-medium rounded-md border-l-4 border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors duration-200;
+
+  &.active {
+    @apply bg-indigo-50 border-indigo-500 text-indigo-700;
+
+    svg {
+      @apply text-indigo-500;
+    }
+  }
+
+  svg {
+    @apply mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors duration-200;
+  }
+}
+
+.nav-badge {
+  @apply ml-auto inline-block py-0.5 px-2 text-xs rounded-full bg-indigo-100 text-indigo-600;
+}
+
+.sidebar-footer {
+  @apply border-t border-gray-200 p-4;
+}
